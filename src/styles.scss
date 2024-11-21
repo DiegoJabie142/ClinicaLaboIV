@@ -1,1 +1,108 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.d-flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.width-100{
+    width: 100%;
+}
+
+.btn {
+    border-radius: 4px;
+    min-width: 36px;
+    min-height: 36px;
+    background-color: rgb(170, 2, 170);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    &:hover {
+      &:not(.btn--disabled) {
+        opacity: 0.7;
+      }
+    }
+    &--disabled {
+      background-color: #dcdcdc;
+      cursor: default;
+    }
+  }
+
+/* Personaliza el estilo global para el MatSnackBar */
+::ng-deep .mat-snack-bar-container {
+  position: fixed;  /* Asegura que el snackBar quede en una posición fija */
+  top: 50%;  /* Posiciona el snackBar en el centro vertical */
+  left: 50%;  /* Posiciona el snackBar en el centro horizontal */
+  transform: translate(-50%, -50%);  /* Desplaza el snackBar para centrarlo completamente */
+  width: 80%;  /* Ajusta el tamaño del snackBar */
+  max-width: 600px;  /* Define un ancho máximo */
+}
+
+/* Estilos específicos para los diferentes tipos de snackBars */
+.success-snackbar {
+  background-color: #4caf50;  /* Color de fondo verde para éxito */
+}
+
+.error-snackbar {
+  background-color: #f44336;  /* Color de fondo rojo para error */
+}
+
+.warning-snackbar {
+  background-color: #ff9800;  /* Color de fondo naranja para advertencia */
+}
+
+/* Estilo del texto en el snackBar */
+.success-snackbar, .error-snackbar, .warning-snackbar {
+  font-size: 18px;  /* Tamaño de fuente grande */
+  font-weight: bold;  /* Texto en negrita */
+  color: #fff;  /* Color de texto blanco */
+  text-align: center;  /* Asegura que el texto esté centrado */
+  padding: 16px;  /* Añade espaciado dentro del snackBar */
+  border-radius: 10px;  /* Bordes redondeados */
+}
+
+.pos-cerrar-sesion{
+  position: absolute;
+  top: 10px;
+  right: 50px;
+  background-color: black;
+  
+}
+
+.p-fixed-bottom{
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.pos-cerrar-sesion {
+  background-color: #d32f2f; /* Color rojo oscuro */
+  color: white; /* Texto blanco */
+  font-size: 16px; /* Tamaño de fuente */
+  padding: 10px 20px; /* Relleno alrededor del texto */
+  border-radius: 25px; /* Bordes redondeados */
+  border: none; /* Sin borde */
+  transition: background-color 0.3s, transform 0.2s; /* Transiciones suaves */
+}
+
+.pos-cerrar-sesion:hover {
+  background-color: #b71c1c; /* Rojo más oscuro cuando pasa el ratón */
+  transform: scale(1.05); /* Ligeramente más grande al pasar el ratón */
+}
+
+.pos-cerrar-sesion:focus {
+  outline: none; /* Eliminar contorno al hacer foco */
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5); /* Agregar sombra sutil en foco */
+}
+
+.pos-cerrar-sesion:active {
+  background-color: #9a0007; /* Rojo más oscuro al hacer clic */
+}

@@ -1,0 +1,129 @@
+/* Contenedor general para centrar el contenido horizontalmente */
+.especialistas-container {
+    display: flex;
+    justify-content: center;  /* Centrado horizontal */
+    align-items: center;      /* Centrado vertical (si lo deseas) */
+    flex-wrap: wrap;          /* Permite que los elementos se ajusten si no caben en una línea */
+    gap: 20px;                /* Espacio entre los elementos */
+    margin-top: 50px;         /* Ajuste para que no esté pegado al borde superior */
+  }
+  
+  /* Estilo para los botones de los especialistas */
+  .especialista-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+    padding: 15px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 150px;
+    text-align: center;
+  }
+  
+  .especialista-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+  
+  .especialista-button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  /* Contenedor de especialidades */
+  .especialidades-container {
+    display: flex;
+    justify-content: center;  /* Centrado horizontal */
+    align-items: center;
+    flex-wrap: wrap;          /* Permite que los elementos se ajusten si no caben en una línea */
+    gap: 20px;                /* Espacio entre los botones */
+    margin-top: 20px;
+  }
+  
+  /* Estilo para los botones de especialidades */
+  .especialistas-container,
+  .especialidades-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .especialidades-container{
+    padding-bottom: 50px;
+  }
+
+  .especialista-button,
+  .especialidad-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    width: 150px;
+    height: 150px;
+    text-align: center;
+  }
+  
+  .especialista-img,
+  .especialidad-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+  
+  .dias-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .dia-button {
+    width: 100px;
+    height: 100px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  .dia-button:hover {
+    background-color: #45a049;
+  }
+  
+  .horarios-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .horario-button {
+    padding: 10px 20px;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .horario-button:hover {
+    background-color: #1e88e5;
+  }

@@ -1,0 +1,76 @@
+.d-flex{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.body{
+    height: 800px;
+    margin-top: 20px;
+    background-position-y: -50px;
+    
+}
+
+body {
+    position: relative;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.body::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url(../../../../img/background-patient.jpg);
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-size: 1875px;
+    opacity: 0.2; /* Ajusta este valor para cambiar la opacidad */
+    z-index: -1; /* Coloca la pseudo-clase detrás del contenido del body */
+}
+
+.d-flex-space-between{
+    display: flex;
+    align-content: space-between;
+    justify-content: space-between;
+}
+
+.margin-input{
+    margin-top: 40px;
+}
+
+.button-login{
+    padding: 22px;
+    margin-top: 40px;
+}
+
+.validators{
+    font-size: 15px;
+    text-align: center;
+    color: red;
+}
+.width-500, .auth-form{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.margin-input{
+    margin-right: 40px;
+    width: 30%;
+}
+
+.widht-100{
+    width: 100%;
+}
+
+.widht-50{
+    width: 100%;
+    display: flex;
+}

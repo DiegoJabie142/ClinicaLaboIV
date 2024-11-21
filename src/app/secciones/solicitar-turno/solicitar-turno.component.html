@@ -1,0 +1,91 @@
+<app-header
+  [title]="'MyClinic'"
+></app-header>
+
+
+<h1 style="width: 100%; display: flex; align-items: center; justify-content: center; margin-top: 50px; font-weight: 600;" *ngIf="role=='administrador'">
+  Seleccione el paciente para su turno:
+</h1>
+
+<div *ngIf='role=="administrador"' class="especialistas-container">
+  <div 
+    *ngFor="let paciente of pacientes" 
+    class="especialista-button" 
+    (click)="selectPaciente(paciente)">
+    <img [src]="paciente.profilePic" alt="Imagen de {{ paciente.name }}" class="especialista-img"/>
+    <span>{{ paciente.name }}</span>
+  </div>
+</div>
+
+<h3 *ngIf="selectedPaciente" style="width: 100%; display: flex; align-items: center; justify-content: center; margin-top: 50px; font-weight: 600;">Paciente seleccionado: {{ selectedPaciente.name }}</h3>
+
+<h1 style="width: 100%; display: flex; align-items: center; justify-content: center; margin-top: 50px; font-weight: 600;" *ngIf="role != 'administrador' || selectedPaciente">
+  Seleccione el especialista para su turno:
+</h1>
+
+<div class="especialistas-container" *ngIf="role != 'administrador' || selectedPaciente">
+  <div 
+    *ngFor="let especialista of especialistas" 
+    class="especialista-button" 
+    (click)="selectEspecialista(especialista)">
+    <img [src]="especialista.profilePic" alt="Imagen de {{ especialista.name }}" class="especialista-img"/>
+    <span>{{ especialista.name }}</span>
+  </div>
+</div>
+
+<div *ngIf="selectedEspecialista">
+  <h3 style="width: 100%; display: flex; align-items: center; justify-content: center; margin-top: 50px; font-weight: 600;">Especialidades de {{ selectedEspecialista.name }}</h3>
+  
+  <div class="especialidades-container">
+    <div 
+      *ngFor="let especialidad of especialidades" 
+      class="especialidad-button" 
+      (click)="selectEspecialidad(especialidad)">
+      
+      <!-- Imagen de la especialidad, si no hay, usa la imagen por defecto -->
+      <img [src]="especialidad.image || 'https://www.rosario3.com/__export/1681168641925/sites/rosario3/img/2023/04/10/clinico.jpg'" alt="Imagen de {{ especialidad.nombre }}" class="especialidad-img"/>
+
+      <!-- Nombre de la especialidad -->
+      <span>{{ especialidad.nombre }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Días disponibles -->
+<div *ngIf="diasDisponibles.length > 0 && selectedEspecialidad" style="padding-bottom: 50px;">
+  <h3 style="text-align: center; margin-top: 20px; font-weight: 600;">Días disponibles para {{selectedEspecialidad.nombre}}:</h3>
+  <div class="dias-container">
+    <button 
+      *ngFor="let dia of diasDisponibles" 
+      class="dia-button" 
+      (click)="selectDia(dia)">
+      {{ dia }}
+    </button>
+  </div>
+</div>
+
+<!-- Mensaje cuando no haya días disponibles -->
+<div *ngIf="diasDisponibles.length === 0 && selectedEspecialidad">
+<p style="text-align: center; margin-top: 20px; font-weight: 500; font-size: 25px; margin-top: 50px;">No hay días disponibles.</p>
+</div>
+
+<!-- Horarios disponibles para el día seleccionado -->
+<div *ngIf="selectedEspecialidad && selectedDia && horariosPorDia?.[selectedDia]" style="padding-bottom: 100px;">
+  <h3 style="text-align: center; margin-top: 20px; font-weight: 600;">Horarios disponibles para {{ selectedDia }}:</h3>
+  <div class="horarios-container">
+    <button 
+    *ngFor="let horario of horariosPorDia[selectedDia]" 
+    class="horario-button" 
+    (click)="seleccionarHorario(horario)">
+    <!-- Mostrar la hora con AM/PM -->
+    {{ getFormattedTime(horario.start) }} 
+    <span>{{ getAmPm(horario.start) }}</span>
+  </button>
+  </div>
+</div>
+
+<div *ngIf="selectedDia && (!horariosPorDia?.[selectedDia] || horariosPorDia[selectedDia].length === 0)" style="font-size: 25px; margin-bottom:50px;">
+  <p style="text-align: center; margin-top: 20px; font-weight: 500; margin-top: 50px; font-size: 25px; padding-bottom: 50px;">No hay horarios disponibles para este día.</p>
+</div>
+
+

@@ -1,0 +1,36 @@
+<app-header
+  [title]="'MyClinic'"
+></app-header>
+
+<div class="profile-section" *ngIf="userData">
+  <div class="profile-card">
+    <div class="profile-images">
+      <div class="profile-image">
+        <img [src]="userData?.profilePic"/>
+      </div>
+      <div class="profile-image" *ngIf="userData?.profilePic2">
+        <img [src]="userData?.profilePic2"/>
+      </div>
+    </div>
+    <div class="profile-info">
+      <h2 class="mt-1">{{userData?.name}} {{userData?.lastName}}</h2>
+      <p><strong>Edad: </strong>{{userData?.age}}</p>
+      <p><strong>DNI: </strong>{{userData?.dni}}</p>
+      <p><strong>Email: </strong> {{userData?.email}}</p>
+      <p><strong *ngIf="userData?.socialWork">Obra Social: </strong>{{userData?.socialWork}}</p>
+      <p><strong *ngIf="userData?.specialities">Especialidades: </strong>{{userData?.specialities}}</p>
+    </div>
+  </div>
+
+  <div *ngIf="historiaClinica" style="background-color: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px; margin: 20px;">
+    <h2>Historia Clínica</h2>
+    <div class="buttons-container">
+      <button *ngFor="let atencionId of atencionIds" 
+              (click)="mostrarDetallesAtencion(atencionId)">
+        {{ historiaClinica[atencionId].horarioData.date }} 
+        Inicio: {{ historiaClinica[atencionId].horarioData.start }} - 
+        Fin: {{ historiaClinica[atencionId].horarioData.end }}
+      </button>
+    </div>
+  </div>
+</div>

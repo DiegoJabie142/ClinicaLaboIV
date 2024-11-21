@@ -1,0 +1,13 @@
+<app-header
+  [title]="'Registro'"
+  [back]="true"
+  [whereToBack]="'/login'"></app-header>
+<div class="body">
+     <div class="d-flex-center widht-100">
+        <app-logo [titulo]="' '"></app-logo>
+</div>
+
+<div class="container d-flex-space-between">
+  <button mat-flat-button class="bg-paciente" (click)="redirectToSignUpPatient($event)"></button>
+  <button mat-flat-button class="bg-especialista" (click)="redirectToSignUpSpecialist($event)"></button>
+</div>

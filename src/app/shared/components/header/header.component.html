@@ -1,0 +1,19 @@
+
+<mat-toolbar class="header bg-primary">
+      <ng-container *ngIf="back">
+        <button class="margin-right" mat-button (click)="redirectTo(whereToBack)">
+          <mat-icon fontIcon="arrow_back"></mat-icon>
+        </button>
+      </ng-container>
+    
+      <strong class="title">{{title}}</strong>
+    
+      <span class="spacer"></span>
+    
+      <ng-container *ngFor="let link of links">
+        <button mat-button (click)="redirectTo(link.route)" class="links" style="color: white;">{{ link.label }}</button>
+      </ng-container>
+    </mat-toolbar>
+    <div *ngIf="isLoggedIn">
+      <button mat-button (click)="signOut()" class="pos-cerrar-sesion">Cerrar sesión</button>
+    </div>

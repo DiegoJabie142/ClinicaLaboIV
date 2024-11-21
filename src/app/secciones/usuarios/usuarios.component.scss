@@ -1,0 +1,60 @@
+.body{
+    padding-bottom: 150px;
+}
+
+/* Contenedor para centrar los botones */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 50px;
+  }
+  
+  /* Estilo base de los botones */
+  .custom-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  /* Botón específico para 'Añadir Paciente' */
+  .add-patient {
+    background-color: #4CAF50; /* Verde */
+  }
+  
+  .add-patient:hover {
+    background-color: #45a049; /* Verde más oscuro */
+  }
+  
+  /* Botón específico para 'Añadir Especialista' */
+  .add-specialist {
+    background-color: #2196F3; /* Azul */
+  }
+  
+  .add-specialist:hover {
+    background-color: #1e88e5; /* Azul más oscuro */
+  }
+  
+  /* Botón específico para 'Añadir Administrador' */
+  .add-admin {
+    background-color: #f44336; /* Rojo */
+  }
+  
+  .add-admin:hover {
+    background-color: #e53935; /* Rojo más oscuro */
+  }
+  
+  /* Efecto de interacción */
+  .custom-button:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  .margin-top{
+    margin-top: 50px;
+  }

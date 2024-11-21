@@ -1,0 +1,48 @@
+<app-header
+  [title]="'MyClinic'"
+></app-header>
+<div class="body">
+    <app-detalles></app-detalles>
+
+    <div class="button-container">
+
+      
+  <button 
+  class="custom-button add-patient" 
+  (click)="onButtonClick('specialist')">
+  Añadir Especialista
+</button>
+
+  <button 
+    class="custom-button add-specialist" 
+    (click)="onButtonClick('patient')">
+    Añadir Paciente
+  </button>
+
+  <button 
+    class="custom-button add-admin" 
+    (click)="onButtonClick('admin')">
+    Añadir Administrador
+  </button>
+</div>
+    <div class="status">
+        <!-- Mostrar el componente de paciente solo si isAddingPatient es true -->
+        <div *ngIf="isAddingPatient" class="margin-top">
+            <app-sign-up-patient [header]="false" [color]="'#2196F3'" [esAdmin]="true" (patientUploaded)="onPatientUploaded($event)"></app-sign-up-patient>
+        </div>
+        <!-- Mostrar el componente de especialista solo si isAddingSpecialist es true -->
+        <div *ngIf="isAddingSpecialist" class="margin-top">
+            <app-sign-up-specialist [header]="false" [color]="'#45a049'"  [esAdmin]="true" (specialistUploaded)="onSpecialistUploaded($event)"></app-sign-up-specialist>
+        </div>
+        <!-- Mostrar el componente de especialista solo si isAddingSpecialist es true -->
+        <div *ngIf="isAddingAdmin" class="margin-top">
+            <app-sign-up-administrator [header]="false" [color]="'#f44336'" [esAdmin]="true" (administratorUploaded)="onAdministratorUploaded($event)"></app-sign-up-administrator>
+        </div>
+    </div>
+</div>
+
+<div class="p-fixed-bottom d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
+    <!-- Copyright -->
+    <div class="text-white mb-3 mb-md-0">Copyright © 2024. All rights reserved.</div>
+    <!-- Copyright -->
+</div>

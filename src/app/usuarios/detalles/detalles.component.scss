@@ -1,0 +1,211 @@
+/* Estilo para la tabla */
+.patient-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .patient-table th,
+  .patient-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+  }
+  
+  .patient-table th {
+    background-color: #4e8de0;
+    font-weight: bold;
+    color: #ffffff;
+  }
+  
+  .patient-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .patient-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  /* Estilo general para los pacientes */
+  h2 {
+    margin-top: 20px;
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .patient-table th, .patient-table td {
+      font-size: 12px;
+      padding: 8px;
+    }
+  }
+  
+
+  .specialist-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .specialist-table th, .specialist-table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .specialist-table th {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .specialist-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  ul li {
+    margin: 5px 0;
+  }
+
+  mat-icon {
+    font-size: 40px; /* Tamaño del ícono */
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+  
+/* Color verde para el ícono cuando está activado */
+.activated {
+  color: green;
+}
+
+/* Color rojo para el ícono cuando no está activado */
+.not-activated {
+  color: red;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+}
+
+.admin-table th, .admin-table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.admin-table th {
+  background-color: #f44336;
+  color: white;
+}
+
+.admin-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+
+.clickable-title {
+  display: flex;
+  align-items: center; /* Alinea el texto y el icono en el centro vertical */
+}
+
+.mat-icon-2{
+  width: 50px;
+}
+
+mat-icon {
+  margin-left: 10px; /* Agrega espacio entre el texto y el icono */
+  transition: color 0.3s ease; /* Transición para el cambio de color */
+}
+
+mat-icon.opened {
+  color: red; /* Rojo cuando la tabla está abierta */
+}
+
+mat-icon.closed {
+  color: green; /* Verde cuando la tabla está cerrada */
+}
+
+.user-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.user-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fav-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+  text-align: center;
+  font-size: 14px;
+}
+
+.profile-pic {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid #ddd;  /* Borde gris suave */
+  object-fit: cover;
+  margin-bottom: 5px;
+}
+
+.fav-button span {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  text-transform: capitalize;
+}
+
+.fav-button:hover .profile-pic {
+  border-color: #28a745; /* Color verde al pasar el mouse */
+}
+
+h2 {
+  font-size: 22px;
+  margin-top: 20px;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #28a745;
+  padding-bottom: 5px;
+  margin-bottom: 20px;
+}
+
+.mat-icon-2 {
+  vertical-align: middle;
+}

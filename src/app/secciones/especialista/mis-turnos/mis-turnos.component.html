@@ -1,0 +1,183 @@
+<app-header
+  [title]="'MyClinic'"
+></app-header>
+
+
+<div class="d-flex w-100" style="justify-content: center; margin-top: 50px;"><h1>TUS TURNOS</h1></div>
+
+<div class="w-80 mb-50">
+  <!-- Campo de búsqueda -->
+  <div class="filter-container mb-3">
+    <input
+      *ngIf="role=='especialista'"
+      type="text" 
+      placeholder="Filtrar por paciente o especialidad..." 
+      [(ngModel)]="terminoBusqueda" 
+      (input)="aplicarFiltroEspecialista()" 
+      class="search-input" 
+    />
+    <input
+    *ngIf="role!='especialista'"
+    type="text" 
+    placeholder="Filtrar por especialista o especialidad..." 
+    [(ngModel)]="terminoBusqueda" 
+    (input)="aplicarFiltro()" 
+    class="search-input" 
+  />
+  </div>
+
+<div class="w-80 mb-50">
+    <table class="horarios-table" *ngIf="horariosConPaciente.length > 0">
+        <thead>
+          <tr>
+            <th>Día</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Especialidad</th>
+            <th>Estado</th>
+            <th *ngIf="role == 'especialista'">Reservado por</th>
+            <th *ngIf="role == 'paciente' || role == 'administrador'">Especialista</th>
+            <th>Comentario</th>
+            <th *ngIf="role != 'administrador'">Reseña</th>
+            <th *ngIf="role == 'paciente'">Encuesta</th>
+            <th *ngIf="role == 'paciente'">Califacar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let horario of horariosFiltrados">
+            <!-- Accede a las propiedades directamente -->
+            <td>{{ horario.date }}</td>
+            <td>{{ horario.start }}</td>
+            <td>{{ horario.end }}</td>
+            <td>{{ horario.especialidad }}</td>
+            <td class="horario-cell">
+                <span [ngClass]="{
+                        'disponible': horario.status === 'disponible',
+                        'pendiente': horario.status === 'pendiente',
+                        'aceptado': horario.status === 'aceptado',
+                        'rechazado': horario.status === 'rechazado',
+                        'cancelado': horario.status === 'cancelado',
+                        'finalizado': horario.status === 'finalizado'
+                      }">
+                  {{ horario.status | titlecase }}
+                </span>
+                <!-- Botones visibles solo si el status es pendiente -->
+                <div *ngIf="horario.status === 'pendiente' && role == 'especialista'" class="buttons-container">
+                  <button (click)="aceptar(horario)" aria-label="Aceptar">
+                    ✔️ <!-- Tick para aceptar -->
+                  </button>
+                  <button (click)="rechazar(horario)" aria-label="Rechazar">
+                    <span class="cruz-roja">X</span> <!-- Cruz para rechazar -->
+                  </button>
+                </div>
+                <!-- Boton visible solo si el status es aceptado -->
+                <div *ngIf="horario.status === 'aceptado' && (role == 'especialista')" class="button-container">
+                  <button (click)="finalizar(horario)" aria-label="Finalizar" class="finalizar-btn">
+                    FINALIZAR
+                  </button>
+                </div>
+                <div *ngIf="(role==='paciente') && (horario.status=='aceptado' || horario.status=='pendiente')" class="button-container">
+                  <button (click)="cancelarPaciente(horario)" aria-label="Finalizar" class="finalizar-btn">
+                    CANCELAR
+                  </button>
+                </div>
+                <div *ngIf="(role==='administrador') && (horario.status=='aceptado' || horario.status=='pendiente')" class="button-container">
+                  <button (click)="cancelarAdmin(horario)" aria-label="Finalizar" class="finalizar-btn">
+                    CANCELAR
+                  </button>
+                </div>
+
+              </td> 
+            <td *ngIf="role == 'especialista'">{{ horario.pacienteNombre ? horario.pacienteNombre : 'No reservado' }}</td>
+            <td *ngIf="role == 'paciente' || role=='administrador'">{{ horario.especialistaNombre ? horario.especialistaNombre : 'No reservado' }}</td>
+            <td>
+                <!-- Muestra el botón solo si el comentario existe y no está vacío -->
+                <button *ngIf="horario.comentario && horario.comentario.trim() !== ''" 
+                        (click)="verComentario(horario.comentario)" 
+                        class="btn btn-ver-comentario"
+                        style="background-color: rgb(58, 57, 57);"
+                        >
+                  Ver Comentario
+                </button>
+              
+                <!-- Muestra el botón deshabilitado si el comentario está vacío o no existe -->
+                <button *ngIf="!horario.comentario" 
+                        class="btn btn-ver-comentario-disabled" 
+                        disabled>
+                  Ver comentario
+                </button>
+            </td>
+            <td *ngIf="role != 'administrador'">
+                <!-- Muestra el botón solo si el comentario existe y no está vacío -->
+                <button *ngIf="horario.resenia && horario.resenia.trim() !== ''" style="background-color: blue;"
+                        (click)="verResenia(horario.resenia)" 
+                        class="btn btn-ver-comentario">
+                  Ver reseña
+                </button>
+              
+                <!-- Muestra el botón deshabilitado si el comentario está vacío o no existe -->
+                <button *ngIf="!horario.resenia" 
+                        class="btn btn-ver-comentario-disabled" 
+                        disabled>
+                  Ver reseña
+                </button>
+            </td>
+            <td *ngIf="role=='paciente'">
+              <!-- Muestra el botón solo si el comentario existe y no está vacío -->
+              <button *ngIf="horario.status == 'finalizado' && horario.encuesta == ''" 
+                      (click)="completarEncuestaPaciente(horario)" 
+                      class="btn btn-ver-comentario"
+                      style="background-color:rgb(255, 0, 255)">
+                Completar encuesta
+              </button>
+            
+              <!-- Muestra el botón deshabilitado si el comentario está vacío o no existe -->
+              <button *ngIf="horario.encuesta != ''" 
+                      class="btn btn-ver-comentario-disabled"
+                      style="background-color:rgb(255, 0, 255)"
+                      (click)="verEncuesta(horario.encuesta)"
+                      >
+                Ver encuesta
+              </button>
+                            
+              <!-- Muestra el botón deshabilitado si el status es diferente de realizado -->
+              <button *ngIf="horario.status != 'finalizado'" 
+                      class="btn btn-ver-comentario-disabled" 
+                      disabled>
+                Completar encuesta
+              </button>
+            
+            </td>
+            <td *ngIf="role=='paciente'">
+              <!-- Muestra el botón solo si el comentario existe y no está vacío -->
+              <button *ngIf="horario.status == 'finalizado' && horario.calificacion == ''"
+                      (click)="completarCalifacionPaciente(horario)" 
+                      class="btn btn-ver-comentario"
+                      style="background-color: rgb(136, 136, 0);">
+                Calificar
+              </button>
+
+              <button *ngIf="horario.calificacion != ''"
+                    (click)="verCalifacion(horario.calificacion)" 
+                    class="btn btn-ver-comentario"
+                    style="background-color: rgb(136, 136, 0);">
+                Ver calificación
+              </button>
+            
+              <!-- Muestra el botón deshabilitado si el comentario está vacío o no existe -->
+              <button *ngIf="horario.status != 'finalizado'"
+                      class="btn btn-ver-comentario-disabled" 
+                      disabled
+                      >
+                Calificar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="horariosConPaciente.length === 0">No tienes turnos reservados.</p>
+    </div>
+</div>
+
+
+  

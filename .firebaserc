@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "clinica-c51d7": {
+      "hosting": {
+        "clinica": [
+          "clinica-c51d7"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "clinica-c51d7"
+  }
+}

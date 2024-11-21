@@ -1,0 +1,14 @@
+<div>
+  <input #fileInput type="file" (change)="captureFile($event)"  hidden>
+  <button type="button" (click)="fileInput.click()" class="file-button">
+    {{label}}
+  </button>
+  <button *ngIf="preview" type="button" (click)="removeFile()" class="remove-button">
+    Eliminar archivo
+  </button>
+</div>
+
+<!-- Vista previa de la imagen -->
+<div *ngIf="preview">
+  <img height="100px" style="margin-top: 30px;" [src]="preview" alt=""/>
+</div>

@@ -1,0 +1,131 @@
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #4c7bb8; /* Fondo suave */
+  height: 1080px;
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column; /* Cambiamos la dirección a columna */
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 20px;
+}
+
+.profile-images {
+  display: flex;
+  justify-content: center; /* Centra las imágenes */
+  gap: 10px;
+  margin-bottom: 15px; /* Espacio debajo de las imágenes */
+}
+
+.profile-image {
+  flex-shrink: 0;
+}
+
+.profile-image img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 3px solid #ddd;  /* Borde gris suave */
+  object-fit: cover;
+}
+
+.profile-info {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.profile-info h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #333;
+}
+
+.profile-info p {
+  margin: 5px 0;
+}
+
+.profile-info strong {
+  color: #555;
+}
+
+.profile-info p:last-child {
+  margin-bottom: 0;
+}
+
+h2 {
+  font-size: 22px;
+  margin-top: 20px;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #28a745;
+  padding-bottom: 5px;
+  margin-bottom: 20px;
+}
+
+.profile-section .profile-info p, .profile-section .profile-info h2 {
+  margin: 5px 0;
+}
+
+.profile-section div h2 {
+  font-size: 20px;
+  color: #333;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.profile-section div div {
+  font-weight: normal;
+  font-size: 16px;
+}
+
+.profile-section .profile-info p strong {
+  color: #555;
+}
+
+/* Contenedor de los botones */
+.buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espacio entre los botones */
+  align-items: center; /* Centra los botones */
+}
+
+/* Estilo básico para los botones */
+button {
+  background-color: #4CAF50; /* Fondo verde */
+  color: white; /* Texto blanco */
+  font-size: 16px; /* Tamaño de la fuente */
+  padding: 10px 20px; /* Relleno interno */
+  border: none; /* Sin borde */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer; /* Manito al pasar el mouse */
+  transition: background-color 0.3s ease; /* Transición suave */
+  margin-top: 20px;
+}
+
+/* Efecto al pasar el mouse */
+button:hover {
+  background-color: #45a049; /* Fondo verde oscuro cuando se pasa el mouse */
+}
+
+/* Efecto de enfoque en el botón */
+button:focus {
+  outline: none; /* Sin borde al hacer clic */
+  box-shadow: 0 0 5px 2px rgba(72, 145, 66, 0.6); /* Sombra verde al enfocar */
+}
+
+/* Estilo cuando el botón está deshabilitado */
+button:disabled {
+  background-color: #cccccc; /* Fondo gris */
+  cursor: not-allowed; /* Cursor de no permitido */
+}

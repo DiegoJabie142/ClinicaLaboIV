@@ -1,0 +1,317 @@
+.horarios-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .month-columns {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1400px; /* Ancho total */
+  }
+  
+  .month-column {
+    flex: 1;
+    margin: 0 10px;
+  }
+  
+  .month-container {
+    width: 700px; /* Ancho de cada bloque de mes */
+    margin: 20px auto;
+    padding: 15px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .month-container h3 {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .days-container {
+    display: flex;
+    flex-wrap: wrap; /* Permitir que los días ocupen varias filas si es necesario */
+    gap: 10px; /* Espaciado entre los días */
+  }
+  
+  .day-container {
+    width: 200px; /* Ancho de cada día */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .checkbox-input {
+    margin-right: 10px;
+  }
+  
+  .time-selector {
+    margin-top: 10px;
+    width: 100%;
+  }
+  
+  .time-label {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  .time-select {
+    width: 100%;
+    padding: 5px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .submit-btn {
+    margin-top: 20px;
+    padding: 15px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 25px;
+    margin-bottom: 50px;
+  }
+  
+  .submit-btn:hover {
+    background-color: #0056b3;
+  }
+  
+
+  // CERRAR SESIÓN
+
+  .pos-cerrar-sesion{
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    background-color: black;
+    
+  }
+
+  .p-fixed-bottom{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+
+  .pos-cerrar-sesion {
+    background-color: #d32f2f; /* Color rojo oscuro */
+    color: white; /* Texto blanco */
+    font-size: 16px; /* Tamaño de fuente */
+    padding: 10px 20px; /* Relleno alrededor del texto */
+    border-radius: 25px; /* Bordes redondeados */
+    border: none; /* Sin borde */
+    transition: background-color 0.3s, transform 0.2s; /* Transiciones suaves */
+  }
+  
+  .pos-cerrar-sesion:hover {
+    background-color: #b71c1c; /* Rojo más oscuro cuando pasa el ratón */
+    transform: scale(1.05); /* Ligeramente más grande al pasar el ratón */
+  }
+  
+  .pos-cerrar-sesion:focus {
+    outline: none; /* Eliminar contorno al hacer foco */
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5); /* Agregar sombra sutil en foco */
+  }
+  
+  .pos-cerrar-sesion:active {
+    background-color: #9a0007; /* Rojo más oscuro al hacer clic */
+  }
+  
+
+  // ESTILOS CHECKBOX 
+
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    padding: 5px;
+  }
+  
+  .checkbox-input {
+    display: none;  /* Ocultamos el checkbox original */
+  }
+  
+  .checkbox-label {
+    position: relative;
+    padding-left: 40px; /* Espacio para el ícono del checkbox */
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #555;
+    cursor: pointer;
+    user-select: none;
+    display: inline-block;
+    line-height: 24px; /* Centra el texto verticalmente */
+    transition: all 0.3s ease;
+  }
+  
+  .checkbox-label::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #4CAF50;
+    border-radius: 5px;
+    background-color: white;
+    transition: all 0.3s ease;
+  }
+  
+  .checkbox-input:checked + .checkbox-label::before {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+  }
+  
+  .checkbox-input:checked + .checkbox-label {
+    color: #4CAF50; /* Cambia el color del texto cuando el checkbox está marcado */
+  }
+  
+  .checkbox-label:hover::before {
+    border-color: #388E3C; /* Color de borde cuando se pasa el mouse */
+  }
+  
+  .checkbox-label:active::before {
+    transform: scale(0.95); /* Efecto de presión cuando se hace clic */
+  }
+  
+  .checkbox-input:focus + .checkbox-label::before {
+    outline: 2px solid #388E3C;
+    outline-offset: 2px;
+  }
+  
+  // ESTILOS DIA
+
+  .day-label {
+    font-size: 15px;         /* Tamaño de fuente para mejorar la legibilidad */
+    font-weight: 600;           /* Negrita para destacar el texto */
+    color: #333;                /* Color del texto */
+    margin-bottom: 5px;         /* Espaciado inferior para separar el texto de otros elementos */
+    display: block;             /* Para hacer que el label ocupe toda la línea */
+    text-align: center;         /* Alineación centrada del texto */
+    padding: 10px;              /* Espaciado interior alrededor del texto */
+    background-color: #f4f4f4;  /* Color de fondo claro para que resalte */
+    border-radius: 5px;         /* Redondeo de bordes */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave para un toque de profundidad */
+    transition: all 0.3s ease;  /* Transición suave para los cambios de estilos */
+    cursor: default;            /* Cursor predeterminado, ya que no es interactivo */
+  }
+  
+
+  // TABLA DE HORARIOS
+
+  /* Estilos generales de la tabla */
+  .horarios-table {
+    width: 80%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+  }
+  
+  /* Estilos para los encabezados */
+  .horarios-table thead {
+    background-color: #3f51b5;
+    color: white;
+  }
+  
+  .horarios-table th {
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 16px;
+  }
+  
+  /* Estilos para las filas de la tabla */
+  .horarios-table tbody tr {
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .horarios-table td {
+    padding: 12px 15px;
+    font-size: 20px;
+    text-align: left;
+  }
+  
+  /* Estilos para filas alternadas */
+  .horarios-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  /* Estilo para la fila al pasar el ratón */
+  .horarios-table tbody tr:hover {
+    background-color: #e0e0e0;
+  }
+  
+  /* Estilos para el mensaje cuando no hay horarios */
+  .no-horarios {
+    text-align: center;
+    font-size: 16px;
+    color: #757575;
+    font-style: italic;
+    margin-top: 20px;
+  }
+  
+  /* Opcional: Estilos para la tabla responsiva */
+  @media (max-width: 768px) {
+    .horarios-table {
+      font-size: 12px;
+    }
+  
+    .horarios-table th, .horarios-table td {
+      padding: 8px;
+    }
+  }
+  
+
+  .w-80{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .mb-50{
+    margin-bottom: 50px;
+    padding-bottom: 100px;
+  }
+
+  .disponible {
+    color: rgb(112, 112, 112);
+  }
+
+  .pendiente {
+    color: rgb(0, 4, 253);
+  }
+
+  .rechazado {
+    color: orange;
+  }
+
+  .cancelado {
+    color: red;
+  }
+
+  .aceptado {
+    color: green;
+  }
+
+  .finalizado{
+    color: rgb(174, 0, 255);
+  }
