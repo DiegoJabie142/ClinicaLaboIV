@@ -1,0 +1,22 @@
+<app-header [title]="'MyClinic'"></app-header>
+
+<div style="width: 100%; display: flex; justify-content: center;">
+
+    <div class="grafico-buttons-container">
+        <button class="grafico-button grafico-logs" (click)="mostrarGraficoLogsUsuarios()">Mostrar gráfico de logs de usuarios</button>
+        <button class="grafico-button grafico-turnos" (click)="mostrarGraficoTurnosEspecialidad()">Mostrar gráfico de turnos por especialidad</button>
+        <button class="grafico-button grafico-turnos-por-dia" (click)="mostrarGraficoTurnosPorDia()">Mostrar gráfico de turnos por día</button>
+        <button class="grafico-button grafico-turnos-tiempo-medico" (click)="mostrarInformeCantidadTurnosMedicoTiempo()">Turnos por medico en un lapso de tiempo</button>
+        <button class="grafico-button grafico-turnos-tiempo-medico-finalizado" (click)="mostrarInformeCantidadTurnosMedicoFinalizado()">Turnos finalizados por medicos en un tiempo</button>         
+    </div>
+
+    <app-informe-logs-usuarios *ngIf="informeTurnosLogsUsuarios"></app-informe-logs-usuarios>
+    
+    <app-informe-turnos-especialidad *ngIf="informeTurnosEspecialidad"></app-informe-turnos-especialidad>
+        
+    <app-informe-turnos-por-dia *ngIf="informeTurnosPorDia"></app-informe-turnos-por-dia>
+
+    <app-informe-cantidad-turnos-medico-tiempo *ngIf="informeCantidadTurnosMedicoTiempo"></app-informe-cantidad-turnos-medico-tiempo>
+
+    <app-informe-cantidad-turnos-medico-tiempo-finalizado *ngIf="informeCantidadTurnosMedicoTiempoFinalizado"></app-informe-cantidad-turnos-medico-tiempo-finalizado>
+  </div>

@@ -1,0 +1,72 @@
+/* Estilo general del contenedor */
+div {
+  max-width: 400px; /* Limita el ancho del contenedor */
+  margin: 0 auto; /* Centra el contenedor en la pantalla */
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Estilo para el título */
+h2 {
+  font-size: 1.3rem; /* Tamaño de fuente moderado */
+  color: #333;
+  margin-bottom: 20px; /* Espacio debajo del título */
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* Estilo para el componente reCAPTCHA */
+re-captcha {
+  margin: 20px 0; /* Espacio arriba y abajo del captcha */
+}
+
+/* Estilo para los botones */
+button {
+  padding: 8px 20px;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  margin: 10px 0;
+}
+
+/* Estilo para el botón de confirmación */
+.confirm-btn {
+  background-color: #4caf50; /* Verde sutil */
+  color: white;
+}
+
+.confirm-btn:hover {
+  background-color: #45a049; /* Verde más oscuro al pasar el mouse */
+}
+
+/* Estilo para el botón de cierre */
+.close-btn {
+  background-color: #f44336; /* Rojo sutil */
+  color: white;
+}
+
+.close-btn:hover {
+  background-color: #e53935; /* Rojo más oscuro al pasar el mouse */
+}
+
+/* Estilo responsivo para pantallas pequeñas */
+@media (max-width: 600px) {
+  div {
+    padding: 15px;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+  }
+
+  button {
+    font-size: 0.9rem;
+    padding: 6px 16px;
+  }
+}

@@ -9,13 +9,28 @@ import { NgIf } from '@angular/common';
 import { FirebaseService } from '../../../services/firebase.service';
 import { UtilsService } from '../../../services/utils.service';
 import { PictureInputComponent } from '../../../shared/components/picture-input/picture-input.component';
+import { CaptchaDirective } from '../../../directivas/captcha.directive';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-sign-up-patient',
   standalone: true,
-  imports: [HeaderComponent, CustomInputComponent, LogoComponent, MatButton, ReactiveFormsModule, FormsModule, NgIf, PictureInputComponent],
+  imports: [HeaderComponent, CustomInputComponent, LogoComponent, MatButton, ReactiveFormsModule, FormsModule, NgIf, PictureInputComponent, CaptchaDirective],
   templateUrl: './sign-up-patient.component.html',
-  styleUrl: './sign-up-patient.component.scss'
+  styleUrl: './sign-up-patient.component.scss',
+  animations: [
+    trigger('slideInOut', [
+      // Animación de entrada (desde la izquierda)
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),  // Comienza fuera de la vista en la izquierda
+        animate('1000ms ease-out', style({ transform: 'translateX(0)' }))  // Desliza a su posición original
+      ]),
+      // Animación de salida (hacia la izquierda)
+      transition(':leave', [
+        animate('300ms ease-in', style({ transform: 'translateX(-100%)' }))  // Desliza fuera hacia la izquierda
+      ])
+    ])
+  ]
 })
 export class SignUpPatientComponent {
 
@@ -23,6 +38,13 @@ export class SignUpPatientComponent {
   @Input() esAdmin: boolean = false; // Inicializado en false por defecto
   @Input() color: string = 'blue';
   @Output() patientUploaded: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+
+  isVisible = true;
+
+  toggleVisibility() {
+    this.isVisible = !this.isVisible;
+  }
 
   constructor(private router: Router) {}
 
@@ -147,6 +169,10 @@ export class SignUpPatientComponent {
   onFileRemoved2(): void {
     // Aquí se manejaría la lógica cuando se elimina la imagen
     this.form.get('profilePic2')?.setValue(null);
+  }
+
+  onCaptchaOnSubmit():() => Promise<void>{
+    return () => this.onSubmit();
   }
 
 }

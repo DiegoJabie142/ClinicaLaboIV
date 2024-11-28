@@ -3,12 +3,12 @@
   [title]="'Registro'"
   [back]="true"
   [whereToBack]="'/sign-up/select'"></app-header>
-<div class="container" [class.body]="header">
+<div class="container" [class.body]="header" *ngIf="isVisible" [@fadeScale]>
     <div class="d-flex-center widht-100">
       <app-logo [titulo]="'Registro de Especialista'" [color]="color"></app-logo>
   </div>
     <div class="d-flex-center width-500">
-        <form  [formGroup]="form" class="auth-form" (ngSubmit)="onSubmit()">
+        <form  [formGroup]="form" class="auth-form">
 
             <!--NOMBRE-->
             <div class="margin-input">
@@ -133,7 +133,11 @@
             </div>
 
             <div class="d-flex-center widht-100" class="button-login submit-btn-register">
-                <button mat-flat-button color="warn" [disabled]="form.invalid" type="submit">REGISTRARSE</button>
+                <button mat-flat-button color="warn" [disabled]="form.invalid" type="submit"
+                [appCaptcha]="onCaptchaOnSubmit()" 
+                [captchaTitle]="'Por favor, resuelve este captcha antes de continuar:'"
+                >REGISTRARSE
+              </button>
             </div>
         </form>
         

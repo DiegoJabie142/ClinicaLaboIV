@@ -1,0 +1,13 @@
+<div>
+  <h2>{{ captchaTitle }}</h2>
+
+  <!-- Aquí se incluye el componente reCAPTCHA -->
+  <re-captcha
+    #recaptcha
+    siteKey="6Ld2F4sqAAAAACA6zKSGlt3QLMNuxg4Ot6qicnL1"
+    (resolved)="onCaptchaResolved()"
+    (expired)="onCaptchaExpired()">
+  </re-captcha>
+  <!-- El botón para cerrar el modal será gestionado por MatDialog automáticamente -->
+  <button (click)="dialogRef.close()" class="close-btn">Cerrar</button>
+</div>

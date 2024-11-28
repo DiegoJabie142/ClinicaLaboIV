@@ -1,0 +1,29 @@
+
+<div id="contenidoHtml">
+    <div style="display: flex; justify-content: center; flex-direction: column; align-items: center; margin-top: 50px">
+        <canvas #turnosChart id="turnosChart"></canvas>
+    </div>
+
+    <table class="tabla-turnos">
+        <thead>
+          <tr>
+            <th class="tabla-cabecera">Especialidad</th>
+            <th class="tabla-cabecera">Turnos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let especialidad of turnosPorEspecialidad | keyvalue" class="tabla-fila">
+            <td class="tabla-dato">{{ especialidad.key }}</td>
+            <td class="tabla-dato">{{ especialidad.value }}</td>
+          </tr>
+        </tbody>
+      </table>
+</div>
+
+
+
+<div style="width: 100%; display: flex; justify-content: center; margin-top: 50px; margin-bottom: 50px;">
+    <button (click)="descargarPdf()" class="btn-descargar">
+        Descargar como PDF
+    </button>   
+</div>

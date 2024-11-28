@@ -3,22 +3,33 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 import { FirebaseService } from '../../services/firebase.service';
 import { UtilsService } from '../../services/utils.service';
 import { NgFor, NgIf } from '@angular/common';
+import Swal from 'sweetalert2';
+import { CaptchaDirective } from '../../directivas/captcha.directive';
+
+
 
 @Component({
   selector: 'app-solicitar-turno',
   standalone: true,
-  imports: [HeaderComponent, NgIf, NgFor],
+  imports: [HeaderComponent, NgIf, NgFor, CaptchaDirective],
   templateUrl: './solicitar-turno.component.html',
   styleUrl: './solicitar-turno.component.scss'
 })
 export class SolicitarTurnoComponent {
-
+  
   title = 'MyClinic';
+
   headerLinks: Array<{ label: string; route: string }> = [];
+
+  horariosFiltrados: any[] = [];
 
   especialistas: any[] = [];
 
+  horariosDiponibles: any[] = [];
+
   pacientes: any[] = [];
+
+  diasDisponibles: any[] = [];
 
   selectedEspecialista: any = null;
 
@@ -28,17 +39,20 @@ export class SolicitarTurnoComponent {
 
   selectedEspecialidad: any = null;
   
-  
   horariosDisponibles: any[] = [];
 
-  horariosPorDia: { [key: string]: any[] } = {}; // Almacena horarios agrupados por día
+  horariosPorDia: any[] = [];
+
   selectedDia: string | null = null; // Día seleccionado
 
   firebaseSvc = inject(FirebaseService);
+
   utilSvc = inject(UtilsService);
 
   isLoggedIn:boolean = false;
   
+
+
 // Función para obtener la hora formateada en 12 horas
 getFormattedTime(hour: string): string {
   const hours = parseInt(hour.split(':')[0], 10); // Obtener la parte de la hora
@@ -63,30 +77,12 @@ getAmPm(hour: string): string {
   role: string | null = '';  // Variable para almacenar el UID
 
   async ngOnInit(): Promise<void> {
-    this.isLoggedIn = await this.estaLoggeado();
     this.getEspecialistas();
     this.role = this.getRoleFromLocalStorage(); // Llamar para obtener el ROL
     if(this.role == 'administrador'){
       this.getPacientes();
     }
   }
-
-  async signOut(): Promise<void> {
-    console.log('Intentando cerrar sesión...');
-    try {
-      await this.firebaseSvc.signOut();
-      console.log('Sesión cerrada exitosamente');
-      this.isLoggedIn = false;
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error);
-    }
-  }
-
-  async estaLoggeado(): Promise<boolean> {
-    return  await this.firebaseSvc.isUserLoggedIn(); // Usando Firebase como ejemplo.
-  }
-
-
 
   // Obtener especialistas de Firebase
   async getEspecialistas() {
@@ -96,10 +92,6 @@ getAmPm(hour: string): string {
   // Obtener especialistas de Firebase
   async getPacientes() {
     this.pacientes = await this.firebaseSvc.getPacientes();
-  }
-
-  get diasDisponibles(): string[] {
-    return Object.keys(this.horariosPorDia);
   }
 
   getRoleFromLocalStorage(): string | null {
@@ -154,73 +146,113 @@ getAmPm(hour: string): string {
       this.selectedEspecialista=null;
     }
 
-  async selectEspecialidad(especialidad: string): Promise<void> {
+ 
+    async selectEspecialidad(especialidad: any): Promise<void> {
+      if (this.selectedEspecialista) {
+        try {
+          // Obtener los horarios disponibles del especialista
+          this.diasDisponibles = await this.firebaseSvc.getDiasDisponiblesEspecialista(this.selectedEspecialista.uid);
+      
+        } catch (error) {
+          console.error('Error al cargar los horarios disponibles:', error);
+        }
+      }
+    
+      this.selectedEspecialidad = especialidad.nombre;
 
-    if (this.selectedEspecialista) {
+      this.selectedDia = null;
+    }
+    
+
+    async selectDia(dia: string) {
       try {
-        this.horariosDisponibles = await this.firebaseSvc.getHorariosDisponibles(
-          this.selectedEspecialista.uid,
-        );
-
-        // Agrupar horarios por día
-        this.horariosPorDia = this.horariosDisponibles.reduce((acc: any, horario: any) => {
-          const fecha = horario.date; // Suponiendo que 'date' está en formato 'DD-MM-YYYY'
-          if (!acc[fecha]) {
-            acc[fecha] = [];
+        this.selectedDia = dia;
+    
+        // Mostrar loading
+        Swal.fire({
+          title: 'Cargando horarios',
+          text: 'Por favor, espera...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
           }
-          acc[fecha].push(horario);
-          return acc;
-        }, {});
+        });
+        
+        
+        const especialidadConDuracion = await this.firebaseSvc.getDuracionEspecialidad(this.selectedEspecialista.uid, this.selectedEspecialidad);
 
-        this.selectedDia = null; // Reiniciar el día seleccionado
+        this.horariosDiponibles = await this.firebaseSvc.getHorariosDisponibles(this.selectedEspecialista.uid, dia, especialidadConDuracion);
+    
+        // Cerrar el loading cuando termine
+        Swal.close();
+  
       } catch (error) {
-        console.error('Error al cargar los horarios disponibles:', error);
+        console.error('Error al seleccionar el día:', error);
+    
+        // Cerrar el loading en caso de error
+        Swal.close();
+    
+        // Mostrar alerta de error
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un problema al cargar los horarios. Intenta de nuevo.',
+        });
       }
     }
-
-    this.selectedEspecialidad = especialidad;
-  }
-
-  selectDia(dia: string): void {
-    this.selectedDia = dia;
-  }
-
-  async seleccionarHorario(horario: any): Promise<void> {
-    try {
-      // Obtener el objeto del usuario desde localStorage
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const userId = this.role === 'administrador' ? this.selectedPaciente?.uid : user?.uid;
-  
-      if (!userId) {
-        console.error('UID del usuario no encontrado o no válido.');
-        this.utilSvc.showError('No se pudo obtener tu información. Intenta nuevamente.');
-        return;
+    
+    async seleccionarHorario(horario: any): Promise<void> {
+      try {
+        // Mostrar loading
+        Swal.fire({
+          title: 'Reservando horario',
+          text: 'Por favor, espera...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+    
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const userId = this.role === 'administrador' ? this.selectedPaciente?.uid : user?.uid;
+    
+        if (this.selectedDia) {
+          await this.firebaseSvc.reservarHorarioTurno(
+            this.selectedEspecialista.uid,
+            this.selectedDia,
+            horario,
+            userId,
+            this.selectedEspecialidad
+          );
+    
+          // Cerrar el loading y mostrar mensaje de éxito
+          Swal.close();
+          Swal.fire({
+            icon: 'success',
+            title: 'Turno reservado',
+            text: 'El turno ha sido reservado exitosamente.'
+          });
+        }
+    
+        this.selectedEspecialidad = null;
+      } catch (error) {
+        console.error('Error al reservar el horario:', error);
+    
+        // Cerrar el loading y mostrar mensaje de error
+        Swal.close();
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un problema al reservar el turno. Intenta de nuevo.'
+        });
       }
-  
-      // Llamar a la función reservarHorario con el UID del usuario o del paciente seleccionado
-      await this.firebaseSvc.reservarHorario(
-        this.selectedEspecialista.uid,
-        horario,
-        userId,
-        this.selectedEspecialidad.nombre
-      );
-  
-      // Filtrar el horario reservado de horariosPorDia[this.selectedDia] si selectedDia no es null
-      if (this.selectedDia && this.horariosPorDia[this.selectedDia]) {
-        this.horariosPorDia[this.selectedDia] = this.horariosPorDia[this.selectedDia].filter(
-          h => h !== horario
-        );
-      }
-  
-      this.utilSvc.showSuccess('Turno reservado exitosamente. Debe esperar que el especialista acepte su cita.');
-    } catch (error) {
-      console.error('Error al reservar el horario:', error);
-      this.utilSvc.showError('No se pudo reservar el turno. Intenta nuevamente.');
+
+      this.horariosDiponibles = [];
+      this.selectedEspecialidad = null;
+      this.selectedDia = null;
     }
 
-    this.selectedEspecialidad = null;
-  }
-  
-  
-  
+    onCaptchaHorario(horario: any): () => Promise<void> {
+      return () => this.seleccionarHorario(horario);
+    }
 } 

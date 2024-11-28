@@ -1,317 +1,278 @@
-.horarios-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .month-columns {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 1400px; /* Ancho total */
-  }
-  
-  .month-column {
-    flex: 1;
-    margin: 0 10px;
-  }
-  
-  .month-container {
-    width: 700px; /* Ancho de cada bloque de mes */
-    margin: 20px auto;
-    padding: 15px;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .month-container h3 {
-    text-align: center;
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 15px;
-  }
-  
-  .days-container {
-    display: flex;
-    flex-wrap: wrap; /* Permitir que los días ocupen varias filas si es necesario */
-    gap: 10px; /* Espaciado entre los días */
-  }
-  
-  .day-container {
-    width: 200px; /* Ancho de cada día */
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .checkbox-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .checkbox-input {
-    margin-right: 10px;
-  }
-  
-  .time-selector {
-    margin-top: 10px;
-    width: 100%;
-  }
-  
-  .time-label {
-    font-size: 0.9rem;
-    margin-bottom: 5px;
-    display: block;
-  }
-  
-  .time-select {
-    width: 100%;
-    padding: 5px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .submit-btn {
-    margin-top: 20px;
-    padding: 15px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 25px;
-    margin-bottom: 50px;
-  }
-  
-  .submit-btn:hover {
-    background-color: #0056b3;
-  }
-  
+/* Estilos Generales */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+}
 
-  // CERRAR SESIÓN
+.horarios-container {
+  width: 80%;
+  margin: 30px auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-  .pos-cerrar-sesion{
-    position: absolute;
-    top: 10px;
-    right: 50px;
-    background-color: black;
-    
-  }
+.section-title {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
 
-  .p-fixed-bottom{
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-  }
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
 
-  .pos-cerrar-sesion {
-    background-color: #d32f2f; /* Color rojo oscuro */
-    color: white; /* Texto blanco */
-    font-size: 16px; /* Tamaño de fuente */
-    padding: 10px 20px; /* Relleno alrededor del texto */
-    border-radius: 25px; /* Bordes redondeados */
-    border: none; /* Sin borde */
-    transition: background-color 0.3s, transform 0.2s; /* Transiciones suaves */
-  }
-  
-  .pos-cerrar-sesion:hover {
-    background-color: #b71c1c; /* Rojo más oscuro cuando pasa el ratón */
-    transform: scale(1.05); /* Ligeramente más grande al pasar el ratón */
-  }
-  
-  .pos-cerrar-sesion:focus {
-    outline: none; /* Eliminar contorno al hacer foco */
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5); /* Agregar sombra sutil en foco */
-  }
-  
-  .pos-cerrar-sesion:active {
-    background-color: #9a0007; /* Rojo más oscuro al hacer clic */
-  }
-  
+.day-card {
+  background-color: #f4f4f4;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
 
-  // ESTILOS CHECKBOX 
+.day-card:hover {
+  transform: translateY(-5px);
+}
 
-  .checkbox-container {
-    display: flex;
-    align-items: center;
-    margin: 10px 0;
-    padding: 5px;
-  }
-  
-  .checkbox-input {
-    display: none;  /* Ocultamos el checkbox original */
-  }
-  
-  .checkbox-label {
-    position: relative;
-    padding-left: 40px; /* Espacio para el ícono del checkbox */
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #555;
-    cursor: pointer;
-    user-select: none;
-    display: inline-block;
-    line-height: 24px; /* Centra el texto verticalmente */
-    transition: all 0.3s ease;
-  }
-  
-  .checkbox-label::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 24px;
-    height: 24px;
-    border: 2px solid #4CAF50;
-    border-radius: 5px;
-    background-color: white;
-    transition: all 0.3s ease;
-  }
-  
-  .checkbox-input:checked + .checkbox-label::before {
-    background-color: #4CAF50;
-    border-color: #4CAF50;
-  }
-  
-  .checkbox-input:checked + .checkbox-label {
-    color: #4CAF50; /* Cambia el color del texto cuando el checkbox está marcado */
-  }
-  
-  .checkbox-label:hover::before {
-    border-color: #388E3C; /* Color de borde cuando se pasa el mouse */
-  }
-  
-  .checkbox-label:active::before {
-    transform: scale(0.95); /* Efecto de presión cuando se hace clic */
-  }
-  
-  .checkbox-input:focus + .checkbox-label::before {
-    outline: 2px solid #388E3C;
-    outline-offset: 2px;
-  }
-  
-  // ESTILOS DIA
+.day-header {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
 
-  .day-label {
-    font-size: 15px;         /* Tamaño de fuente para mejorar la legibilidad */
-    font-weight: 600;           /* Negrita para destacar el texto */
-    color: #333;                /* Color del texto */
-    margin-bottom: 5px;         /* Espaciado inferior para separar el texto de otros elementos */
-    display: block;             /* Para hacer que el label ocupe toda la línea */
-    text-align: center;         /* Alineación centrada del texto */
-    padding: 10px;              /* Espaciado interior alrededor del texto */
-    background-color: #f4f4f4;  /* Color de fondo claro para que resalte */
-    border-radius: 5px;         /* Redondeo de bordes */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave para un toque de profundidad */
-    transition: all 0.3s ease;  /* Transición suave para los cambios de estilos */
-    cursor: default;            /* Cursor predeterminado, ya que no es interactivo */
-  }
-  
+.day-body label {
+  font-size: 1rem;
+  color: #7f8c8d;
+  display: block;
+  margin: 10px 0 5px;
+}
 
-  // TABLA DE HORARIOS
+select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
 
-  /* Estilos generales de la tabla */
-  .horarios-table {
-    width: 80%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-  }
-  
-  /* Estilos para los encabezados */
-  .horarios-table thead {
-    background-color: #3f51b5;
-    color: white;
-  }
-  
-  .horarios-table th {
-    padding: 12px 15px;
-    text-align: left;
-    font-size: 16px;
-  }
-  
-  /* Estilos para las filas de la tabla */
-  .horarios-table tbody tr {
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .horarios-table td {
-    padding: 12px 15px;
-    font-size: 20px;
-    text-align: left;
-  }
-  
-  /* Estilos para filas alternadas */
-  .horarios-table tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  
-  /* Estilo para la fila al pasar el ratón */
-  .horarios-table tbody tr:hover {
-    background-color: #e0e0e0;
-  }
-  
-  /* Estilos para el mensaje cuando no hay horarios */
-  .no-horarios {
-    text-align: center;
-    font-size: 16px;
-    color: #757575;
-    font-style: italic;
-    margin-top: 20px;
-  }
-  
-  /* Opcional: Estilos para la tabla responsiva */
-  @media (max-width: 768px) {
-    .horarios-table {
-      font-size: 12px;
-    }
-  
-    .horarios-table th, .horarios-table td {
-      padding: 8px;
-    }
-  }
-  
+.add-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #3498db;
+  color: #fff;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-  .w-80{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .mb-50{
-    margin-bottom: 50px;
-    padding-bottom: 100px;
-  }
+.add-button:hover {
+  background-color: #2980b9;
+}
 
-  .disponible {
-    color: rgb(112, 112, 112);
-  }
+.added-title {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: #34495e;
+}
 
-  .pendiente {
-    color: rgb(0, 4, 253);
-  }
+.horarios-list {
+  list-style-type: none;
+  padding: 0;
+}
 
-  .rechazado {
-    color: orange;
-  }
+.horario-item {
+  display: flex;
+  justify-content: space-between;
+  background-color: #ecf0f1;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 5px;
+  align-items: center;
+}
 
-  .cancelado {
-    color: red;
-  }
+.remove-button {
+  background-color: #e74c3c;
+  color: #fff;
+  padding: 5px 5px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-  .aceptado {
-    color: green;
-  }
+.remove-button:hover {
+  background-color: #c0392b;
+}
 
-  .finalizado{
-    color: rgb(174, 0, 255);
-  }
+.save-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.save-button {
+  padding: 12px 20px;
+  background-color: #2ecc71;
+  color: #fff;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-button:hover {
+  background-color: #27ae60;
+}
+
+
+/* Estilos generales para los botones */
+button {
+  font-family: 'Arial', sans-serif;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+/* Estilo para el botón "Añadir Horario" */
+.add-btn {
+  background-color: #3498db;
+  color: white;
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
+}
+
+.add-btn:hover {
+  background-color: #2980b9;
+  box-shadow: 0 6px 12px rgba(52, 152, 219, 0.3);
+}
+
+/* Estilo para el botón "Eliminar" */
+.remove-btn {
+  background-color: #e74c3c;
+  color: white;
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.2);
+}
+
+.remove-btn:hover {
+  background-color: #c0392b;
+  box-shadow: 0 6px 12px rgba(231, 76, 60, 0.3);
+}
+
+/* Estilo para el botón "Guardar Todos" */
+.save-btn {
+  background-color: #2ecc71;
+  color: white;
+  box-shadow: 0 4px 8px rgba(46, 204, 113, 0.2);
+}
+
+.save-btn:hover {
+  background-color: #27ae60;
+  box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+}
+
+
+
+// TABLA ESPECIALIDADES
+
+
+/* Estilos para la tabla */
+table {
+  width: 80%;
+  margin: 20px auto;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  overflow: hidden;
+}
+
+/* Estilo para los encabezados */
+th {
+  background: linear-gradient(135deg, #4CAF50, #2E8B57);
+  color: #fff;
+  padding: 15px 20px;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: 3px solid #ddd;
+  letter-spacing: 1px;
+}
+
+/* Estilo para las celdas */
+td {
+  padding: 15px 20px;
+  text-align: left;
+  font-size: 16px;
+  color: #555;
+  border-bottom: 1px solid #ddd;
+  background-color: #fafafa;
+  transition: background-color 0.3s ease;
+}
+
+/* Estilo para las filas alternadas */
+tr:nth-child(even) td {
+  background-color: #f9f9f9;
+}
+
+/* Estilo para las filas al pasar el cursor */
+tr:hover td {
+  background-color: #f1f1f1;
+}
+
+/* Estilos de la fila vacía */
+tr.empty td {
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+/* Estilo para bordes y sombras */
+table {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  width: 960px;
+}
+
+/* Efecto de sombra en la tabla */
+table {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Añadir un efecto suave en hover */
+td, th {
+  transition: all 0.3s ease;
+}
+
+/* Estilos para los botones si los agregas en la tabla */
+button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #45a049;
+}

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { noAuthGuard } from './guards/no-auth.guard';
 import { authGuard } from './guards/auth.guard';
+import { trigger, transition, animate, style } from '@angular/animations';
 
 export const routes: Routes = [
     {
@@ -30,7 +31,7 @@ export const routes: Routes = [
      
     },
     {
-      path: 'users',
+      path: 'usuarios',
       loadComponent: () => import('./secciones/usuarios/usuarios.component').then(m=>m.UsuariosComponent), canActivate: [authGuard],
       data: { role: 'administrador' },
     },
@@ -55,8 +56,29 @@ export const routes: Routes = [
       loadComponent: () =>
         import('./secciones/especialista/mis-turnos/mis-turnos.component').then((m) => m.MisTurnosComponent),
       canActivate: [authGuard],
-      data: { roles: ['especialista','paciente','administrador'] }, // Roles permitidos
-    }
+      data: { roles: ['especialista','paciente'] }, // Roles permitidos
+    },
+    {
+      path: 'turnos',
+      loadComponent: () =>
+        import('./secciones/especialista/mis-turnos/mis-turnos.component').then((m) => m.MisTurnosComponent),
+      canActivate: [authGuard],
+      data: { roles: ['administrador'] }, // Roles permitidos
+    },
+    {
+      path: 'pacientes',
+      loadComponent: () =>
+        import('./secciones/especialista/pacientes/pacientes.component').then((m) => m.PacientesComponent),
+      canActivate: [authGuard],
+      data: { roles: ['especialista'] }, // Roles permitidos
+    },    {
+      path: 'informes',
+      loadComponent: () =>
+        import('./secciones/informes/informes.component').then((m) => m.InformesComponent),
+      canActivate: [authGuard],
+      data: { roles: ['administrador'] }, // Roles permitidos
+    },
+    
 
 
 ];

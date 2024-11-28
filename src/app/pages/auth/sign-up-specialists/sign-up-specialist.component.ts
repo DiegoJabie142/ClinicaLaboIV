@@ -9,15 +9,36 @@ import { NgFor, NgIf } from '@angular/common';
 import { FirebaseService } from '../../../services/firebase.service';
 import { UtilsService } from '../../../services/utils.service';
 import { PictureInputComponent } from '../../../shared/components/picture-input/picture-input.component';
+import { CaptchaDirective } from '../../../directivas/captcha.directive';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-sign-up-specialist',
   standalone: true,
-  imports: [HeaderComponent, CustomInputComponent, MatButton, ReactiveFormsModule, FormsModule, NgIf, PictureInputComponent, NgFor, LogoComponent],
+  imports: [HeaderComponent, CustomInputComponent, MatButton, ReactiveFormsModule, FormsModule, NgIf, PictureInputComponent, NgFor, LogoComponent, CaptchaDirective],
   templateUrl: './sign-up-specialist.component.html',
-  styleUrl: './sign-up-specialist.component.scss'
+  styleUrl: './sign-up-specialist.component.scss',
+  animations: [
+    trigger('fadeScale', [
+      // Animación de entrada
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0.8)' }),  // Comienza siendo pequeño y transparente
+        animate('500ms ease-out', style({ opacity: 1, transform: 'scale(1)' }))  // Se hace grande y visible
+      ]),
+      // Animación de salida
+      transition(':leave', [
+        animate('500ms ease-in', style({ opacity: 0, transform: 'scale(0.8)' }))  // Se reduce y desvanece
+      ])
+    ])
+  ]
 })
 export class SignUpSpecialistComponent {
+
+  isVisible = true;
+
+  toggleVisibility() {
+    this.isVisible = !this.isVisible;
+  }
 
   @Input() header: boolean = true; // Inicializado en true por defecto
   @Input() color: string = 'blue';
@@ -235,6 +256,8 @@ export class SignUpSpecialistComponent {
     }
   }
   
-  
+  onCaptchaOnSubmit():() => Promise<void>{
+    return () => this.onSubmit();
+  }
 
 }

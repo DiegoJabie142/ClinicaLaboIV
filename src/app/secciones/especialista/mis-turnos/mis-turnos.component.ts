@@ -4,117 +4,92 @@ import { HeaderComponent } from '../../../shared/components/header/header.compon
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { CapitalizePipe } from '../../../pipes/capitalize.pipe';
+import { CaptchaDirective } from '../../../directivas/captcha.directive';
+import { ResaltarEstadoTurnoPipe } from '../../../pipes/resaltar-estado-turno.pipe';
+import { OrdenarTurnosPipe } from '../../../pipes/ordenar-turnos.pipe';
+import { HighlightUpcomingDirective } from '../../../directivas/highlight-upcoming.directive';
+
+interface HistoriaClinica {
+  [key: string]: any;  // Permite claves dinámicas de tipo string
+}
 
 @Component({
   selector: 'app-mis-turnos',
   standalone: true,
-  imports: [NgFor, NgIf,FormsModule, HeaderComponent, CommonModule],
+  imports: [FormsModule, HeaderComponent, CommonModule, CapitalizePipe, CaptchaDirective, ResaltarEstadoTurnoPipe, OrdenarTurnosPipe, HighlightUpcomingDirective],
   templateUrl: './mis-turnos.component.html',
   styleUrl: './mis-turnos.component.scss'
 })
 export class MisTurnosComponent {
 
-  horarios: any[] = [];  // Para almacenar los horarios recuperados
-  uid: string = '';  // Variable para almacenar el UID
-  role: string | null = '';  // Variable para almacenar el UID
+  filterText: string = '';
+
+  horarios: any[] = []; 
+
+  turnosFiltrados: any[] = [];
+
+  uid: string = '';  
+
+  role: string | null = ''; 
 
   title = 'MyClinic';
-  headerLinks: Array<{ label: string; route: string }> = [];
 
-  currentDate: Date = new Date();
+  headerLinks: Array<{ label: string; route: string }> = [];
 
   horariosConPaciente: any[] = [];
 
   mostrarConfirmacion: boolean = false;
 
   isLoggedIn:boolean = false;
+
   firebaseSvc = inject(FirebaseService);
-
-  private _horariosFiltrados: any[] = [];
-
-  set horariosFiltrados(data: any[]) {
-    this._horariosFiltrados = data;
-    if(this.role=='especialista'){
-      this.aplicarFiltroEspecialista();
-    }else{
-      this.aplicarFiltro(); // Llamamos a aplicarFiltro cada vez que se actualiza horariosFiltrados
-    }
-  }
-
-  get horariosFiltrados(): any[] {
-    return this._horariosFiltrados;
-  }
-  
-  terminoBusqueda: string = '';   // Texto del campo de búsqueda
 
   constructor() {}
 
   async ngOnInit(): Promise<void> {
     this.role = this.getRoleFromLocalStorage(); // Llamar para obtener el ROL
-    this.updateHeaderLinks();
     this.isLoggedIn = await this.estaLoggeado();
     this.getUidFromLocalStorage();  // Llamar para obtener el UID
     await this.loadHorarios();  // Llamar la función para cargar los horarios
-    this.horariosFiltrados = [...this.horariosConPaciente]; 
+    this.turnosFiltrados = [...this.horarios]; // Copia inicial para mostrar todos los turnos
   }
-
-
-  aplicarFiltro(): void {
-    const texto = this.terminoBusqueda.toLowerCase().trim();
-    this.horariosFiltrados = this.horariosConPaciente.filter(horario => {
-      const especialidad = horario.especialidad?.toLowerCase() || '';
-      const especialistaNombre = horario.especialistaNombre?.toLowerCase() || '';
-      return (
-        especialidad.includes(texto) || 
-        especialistaNombre.includes(texto)
-      );
-    });
-  }
-
-  aplicarFiltroEspecialista(): void {
-    const texto = this.terminoBusqueda.toLowerCase().trim();
-    this.horariosFiltrados = this.horariosConPaciente.filter(horario => {
-      const especialidad = horario.especialidad?.toLowerCase() || '';
-      const especialistaNombre = horario.pacienteNombre?.toLowerCase() || '';
-      return (
-        especialidad.includes(texto) || 
-        especialistaNombre.includes(texto)
-      );
-    });
-  }
-  
 
   async estaLoggeado(): Promise<boolean> {
     return  await this.firebaseSvc.isUserLoggedIn();
   }
 
-
-  updateHeaderLinks() {
-    if(this.role === 'administrador') {
-      this.headerLinks = [
-        { label: 'Mi Perfil', route: '/mi-perfil' },
-        { label: 'Sección Usuarios', route: '/users' },
-        { label: 'Configuración', route: '/admin-settings' },
-      ];
-    } else if (this.role === 'especialista') {
-      this.headerLinks = [
-        { label: 'Home', route: '/home' },
-        { label: 'Mi Perfil', route: '/mi-perfil' },   
-      ];
-    } else if (this.role === 'paciente') {
-      this.headerLinks = [
-        { label: 'Mi Perfil', route: '/mi-perfil' },
-        { label: 'Mi Historial', route: '/history' },
-        { label: 'Reservar Cita', route: '/book-appointment' },
-      ];
-    } else {
-      this.headerLinks = [
-        { label: 'Iniciar Sesión', route: '/login' },
-        { label: 'Registrarse', route: '/sign-up/select' }
-      ];
-    }
-  }
   
+  aplicarFiltro(): void {
+    const filter = this.filterText?.toLowerCase() || ''; // Convertir el texto del filtro a minúsculas
+  
+    this.turnosFiltrados = this.horarios.filter((turno) => {
+      return this.objectContainsText(turno, filter);
+    });
+  }
+
+  private objectContainsText(obj: any, text: string): boolean {
+    // Recorre todas las propiedades del objeto
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+  
+        // Si el valor es un objeto, llama recursivamente
+        if (typeof value === 'object' && value !== null) {
+          if (this.objectContainsText(value, text)) {
+            return true;
+          }
+        } else if (typeof value === 'string' || typeof value === 'number') {
+          // Si el valor es una cadena o número, verifica si incluye el texto
+          if (value.toString().toLowerCase().includes(text)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   getUidFromLocalStorage(): void {
     const user = JSON.parse(localStorage.getItem('user') || '{}');  // Obtener el usuario desde localStorage
     if (user && user.uid) {
@@ -144,15 +119,39 @@ export class MisTurnosComponent {
   async loadHorarios(): Promise<void> {
     if (this.uid) {
       try {
-        if(this.role=='especialista'){
-          this.horarios = await this.firebaseSvc.getEspecialistaHorarios(this.uid);
-        }else if(this.role=='administrador'){
-          this.horarios = await this.firebaseSvc.getAdminHorarios();
-        }else if(this.role=='paciente'){
-          this.horarios = await this.firebaseSvc.getPacienteHorarios(this.uid);
+        // Mostrar el loading con SweetAlert
+        Swal.fire({
+          title: 'Cargando horarios...',
+          text: 'Por favor espere...',
+          icon: 'info',
+          allowOutsideClick: false,
+          showConfirmButton: false,
+          didOpen: () => {
+            Swal.showLoading(); // Muestra el loader
+          }
+        });
+  
+        if (this.role == 'especialista') {
+          this.horarios = await this.firebaseSvc.getTurnosEspecialista(this.uid);
+        } else if (this.role == 'administrador') {
+          this.horarios = await this.firebaseSvc.getTurnosAdmin();
+        } else if (this.role == 'paciente') {
+          console.log('hola');
+          console.log(this.uid);
+          this.horarios = await this.firebaseSvc.getTurnosPaciente(this.uid);
+          console.log(this.horarios);
         }
+  
+        // Ocultar el loading después de que los horarios estén cargados
+        Swal.close();
+  
       } catch (error) {
         console.error('Error al cargar los horarios', error);
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un error al cargar los horarios.',
+          icon: 'error'
+        });
       }
     } else {
       console.error('No se puede cargar los horarios porque no hay UID');
@@ -170,30 +169,25 @@ export class MisTurnosComponent {
       } else {
         horario.pacienteNombre = 'No reservado';
       }
-
-      if(this.role=='paciente' || this.role=='administrador'){
+  
+      if (this.role == 'paciente' || this.role == 'administrador') {
         horario.especialistaNombre = await this.firebaseSvc.getEspecialistaNombre(horario.especialistaId);
       }
-
+  
       return horario;
     }));
-  
-    // Reemplazamos el array con la nueva referencia
-    this.horariosConPaciente = updatedHorarios;
-    this.horariosFiltrados = [...this.horariosConPaciente]; 
+    this.turnosFiltrados = updatedHorarios;
+    this.aplicarFiltro();
   }
   
-
-  rechazar(horario: any): void {
+  async rechazarTurno(horario: any): Promise<void> {
     Swal.fire({
       title: '¿Qué deseas hacer con el turno?',
       text: 'Elige una opción para proceder.',
       icon: 'warning',
       showCancelButton: true,
-      showDenyButton: true,
       confirmButtonText: 'Rechazar Turno',
       cancelButtonText: 'No hacer nada',
-      denyButtonText: 'Cancelar Turno',
       customClass: {
         confirmButton: 'swal-button-rechazar',
         cancelButton: 'swal-button-cancelar',
@@ -201,7 +195,7 @@ export class MisTurnosComponent {
       },
     }).then((result) => {
       if (result.isConfirmed) {
-        // Abrir un segundo Swal para pedir la razón del rechazo
+        // Solicitar razón del rechazo
         Swal.fire({
           title: 'Razón del rechazo',
           input: 'textarea',
@@ -214,23 +208,40 @@ export class MisTurnosComponent {
           cancelButtonText: 'Cancelar',
           inputValidator: (value: string) => {
             if (!value) {
-              return 'Por favor, escribe una razón.'; // Devuelve el mensaje de error si no hay texto
+              return 'Por favor, escribe una razón.';
             }
-            return null; // No hay errores de validación
+            return null;
           },
         }).then((reasonResult) => {
           if (reasonResult.isConfirmed) {
-            const razonRechazo = reasonResult.value; // Variable para almacenar la razón
-            console.log('Razón del rechazo:', razonRechazo);
-            this.firebaseSvc.rechazarHorario(this.uid,horario,'Rechazado por el especialista. Razón: ' + razonRechazo).then(()=>{
+            const razonRechazo = reasonResult.value;
+            this.firebaseSvc.rechazarTurno(horario.id, 'Rechazado por el especialista. Razón: ' + razonRechazo).then(() => {
               this.loadHorarios();
-            }) 
+            });
           }
         });
-      } else if (result.isDenied) {
-        // Abrir un segundo Swal para pedir la razón del cancelamiento
+      }
+    });
+  }
+
+  async cancelarTurno(horario: any): Promise <void> {
+    Swal.fire({
+      title: '¿Qué deseas hacer con el turno?',
+      text: 'Elige una opción para proceder.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Cancelar Turno',
+      cancelButtonText: 'No hacer nada',
+      customClass: {
+        confirmButton: 'swal-button-rechazar',
+        cancelButton: 'swal-button-cancelar',
+        denyButton: 'swal-button-no-hacer-nada',
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Solicitar razón del rechazo
         Swal.fire({
-          title: 'Razón del cancelamiento',
+          title: 'Razón del rechazo',
           input: 'textarea',
           inputPlaceholder: 'Escribe la razón aquí...',
           inputAttributes: {
@@ -241,23 +252,23 @@ export class MisTurnosComponent {
           cancelButtonText: 'Cancelar',
           inputValidator: (value: string) => {
             if (!value) {
-              return 'Por favor, escribe una razón.'; // Devuelve el mensaje de error si no hay texto
+              return 'Por favor, escribe una razón.';
             }
-            return null; // No hay errores de validación
+            return null;
           },
         }).then((reasonResult) => {
           if (reasonResult.isConfirmed) {
-            const razonCancelamiento = reasonResult.value; // Variable para almacenar la razón
-            this.firebaseSvc.cancelarHorario(this.uid,horario,'Cancelado por el especialista. Razón: ' + razonCancelamiento).then(()=>{
+            const razonRechazo = reasonResult.value;
+            this.firebaseSvc.cancelarTurno(horario.id, 'Cancelado por el especialista. Razón: ' + razonRechazo).then(() => {
               this.loadHorarios();
-            }) 
+            });
           }
         });
       }
     });
   }
   
-  cancelarPaciente(horario: any): void {
+  async cancelarPaciente(horario: any): Promise<void> {
     Swal.fire({
       title: 'Cancelar Turno',
       text: 'Por favor, ingresa una razón antes de cancelar el turno.',
@@ -278,7 +289,7 @@ export class MisTurnosComponent {
       if (result.isConfirmed) {
         const comentario = result.value;
         // Llamar a la función para finalizar el turno
-        this.firebaseSvc.cancelarHorario(horario.especialistaId, horario,'Cancelado por el paciente. Razón: ' + comentario)
+        this.firebaseSvc.cancelarTurno(horario.id,'Cancelado por el paciente. Razón: ' + comentario)
           .then(() => {
             this.loadHorarios(); // Recargar los horarios
           })
@@ -316,7 +327,7 @@ export class MisTurnosComponent {
       if (result.isConfirmed) {
         const comentario = result.value;
         // Llamar a la función para finalizar el turno
-        this.firebaseSvc.cancelarHorario(horario.especialistaId, horario,'Cancelado por el admin. Razón: ' + comentario)
+        this.firebaseSvc.cancelarTurno(horario.id,'Cancelado por el admin. Razón: ' + comentario)
           .then(() => {
             this.loadHorarios(); // Recargar los horarios
           })
@@ -334,7 +345,7 @@ export class MisTurnosComponent {
   }
 
 
-  completarEncuestaPaciente(horario: any): void {
+  async completarEncuestaPaciente(horario: any): Promise<void> {
     Swal.fire({
       title: 'Encuesta',
       text: '¿Recomendaría esta clínica con alguien más?',
@@ -355,7 +366,7 @@ export class MisTurnosComponent {
       if (result.isConfirmed) {
         const comentario = result.value;
         // Llamar a la función para finalizar el turno
-        this.firebaseSvc.completarEncuestaHorario(horario.especialistaId, horario,comentario)
+        this.firebaseSvc.completarEncuestaHorario(horario.id,comentario)
           .then(() => {
             this.loadHorarios(); // Recargar los horarios
           })
@@ -372,7 +383,7 @@ export class MisTurnosComponent {
     });
   }
 
-  completarCalifacionPaciente(horario: any): void {
+  async completarCalifacionPaciente(horario: any): Promise <void> {
     Swal.fire({
       title: 'Califique al especialista',
       text: 'Deje un comentario de como fue la atención del especialista.',
@@ -392,7 +403,7 @@ export class MisTurnosComponent {
     }).then((result) => {
       if (result.isConfirmed) {
         const comentario = result.value;
-        this.firebaseSvc.completarCalificacionHorario(horario.especialistaId, horario, comentario)
+        this.firebaseSvc.completarCalificacionTurno(horario.id, comentario)
           .then(() => {
             this.loadHorarios(); // Recargar los horarios
           })
@@ -446,7 +457,7 @@ export class MisTurnosComponent {
   }
 
   
-  aceptar(horario: any): void {
+  async aceptar(horario: any): Promise<void> {
     Swal.fire({
       title: '¿Estás seguro de aceptar el turno?',
       text: 'Una vez aceptado, no podrás modificarlo.',
@@ -461,177 +472,202 @@ export class MisTurnosComponent {
     }).then((result) => {
       if (result.isConfirmed) {
         console.log('Turno aceptado:', horario);
-        this.firebaseSvc.aceptarHorario(this.uid,horario).then(()=>{
+        this.firebaseSvc.aceptarHorario(horario.id).then(()=>{
           this.loadHorarios();
         }) 
       }
     });
   }
   
-  finalizar(horario: any): void {
+  async finalizar(horario: any): Promise<void> {
+    const camposFijos = ['Altura (cm)', 'Peso (kg)', 'Temperatura (°C)', 'Presión (mmHg)'];
+  
+    const crearCampoInput = (type: string, placeholder: string, required = true) => {
+      const input = document.createElement('input');
+      input.type = type;
+      input.placeholder = placeholder;
+      input.required = required;
+      input.style.width = '100%';
+      input.style.padding = '10px';
+      input.style.marginBottom = '10px';
+      input.style.border = '1px solid #ccc';
+      input.style.borderRadius = '5px';
+      input.style.fontSize = '14px';
+      return input;
+    };
+  
+    const crearCampoClaveValor = (clavePlaceholder: string, valorPlaceholder: string) => {
+      const container = document.createElement('div');
+      container.style.display = 'flex';
+      container.style.gap = '10px';
+  
+      const claveInput = crearCampoInput('text', clavePlaceholder);
+      const valorInput = crearCampoInput('text', valorPlaceholder);
+  
+      container.appendChild(claveInput);
+      container.appendChild(valorInput);
+      return container;
+    };
+  
+    const crearCampoRango = () => {
+      const container = document.createElement('div');
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+      container.style.alignItems = 'center';
+  
+      const claveRangoInput = crearCampoInput('text', 'Clave para el rango (Ej: nivel)');
+      const rangoInput = crearCampoInput('range', 'Rango de 0 a 100');
+      rangoInput.min = '0';
+      rangoInput.max = '100';
+  
+      container.appendChild(claveRangoInput);
+      container.appendChild(rangoInput);
+      return container;
+    };
+  
+    const crearCampoNum = () => {
+      const container = document.createElement('div');
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+      container.style.alignItems = 'center';
+  
+      const claveNumInput = crearCampoInput('text', 'Clave para el número (Ej: cantidad)');
+      const numInput = crearCampoInput('number', 'Número');
+  
+      container.appendChild(claveNumInput);
+      container.appendChild(numInput);
+      return container;
+    };
+  
+    // Crear el campo dinámico de Sí/No
+    const crearCampoSiNo = () => {
+      const container = document.createElement('div');
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+      container.style.alignItems = 'center';
+  
+      const claveSiNoInput = crearCampoInput('text', 'Clave para Sí/No');
+      const valorSiNoSelect = document.createElement('select');
+      valorSiNoSelect.style.width = '100%';
+      valorSiNoSelect.style.padding = '10px';
+      valorSiNoSelect.style.marginBottom = '10px';
+      valorSiNoSelect.style.border = '1px solid #ccc';
+      valorSiNoSelect.style.borderRadius = '5px';
+      valorSiNoSelect.style.fontSize = '14px';
+  
+      const optionYes = document.createElement('option');
+      optionYes.value = 'sí';
+      optionYes.textContent = 'Sí';
+  
+      const optionNo = document.createElement('option');
+      optionNo.value = 'no';
+      optionNo.textContent = 'No';
+  
+      valorSiNoSelect.appendChild(optionYes);
+      valorSiNoSelect.appendChild(optionNo);
+  
+      container.appendChild(claveSiNoInput);
+      container.appendChild(valorSiNoSelect);
+      return container;
+    };
+  
     Swal.fire({
       title: 'Finalizar Turno',
       text: 'Por favor, ingresa una reseña y los datos de la historia clínica antes de finalizar el turno.',
       input: 'textarea',
       inputPlaceholder: 'Escribe tu reseña aquí...',
-      showCancelButton: true,  // Permite cancelar
+      showCancelButton: true,
       confirmButtonText: 'Finalizar Turno',
-      confirmButtonColor: '#28a745', // Verde bonito
+      confirmButtonColor: '#28a745',
       cancelButtonText: 'Cancelar',
-      cancelButtonColor: '#d33', // Rojo para cancelar
+      cancelButtonColor: '#d33',
       preConfirm: (value: string) => {
         if (!value.trim()) {
           Swal.showValidationMessage('La reseña es obligatoria');
-          return false; // Impide que se cierre el modal sin una reseña
+          return false;
         }
-        return value; // Devuelve la reseña ingresada si es válida
-      },
-      inputAttributes: {
-        'aria-label': 'Escribe la reseña del turno aquí',
+        return value;
       },
       didOpen: () => {
-        const container = Swal.getPopup(); // Usamos getPopup() en lugar de getContent()
-  
-        // Verificamos si container no es null
+        const container = Swal.getPopup();
         if (container) {
           const form = document.createElement('form');
-  
-          // Crear campos para los datos fijos de la historia clínica
-          const alturaInput = document.createElement('input');
-          alturaInput.type = 'number';
-          alturaInput.placeholder = 'Altura (cm)';
-          alturaInput.required = true;
-  
-          const pesoInput = document.createElement('input');
-          pesoInput.type = 'number';
-          pesoInput.placeholder = 'Peso (kg)';
-          pesoInput.required = true;
-  
-          const temperaturaInput = document.createElement('input');
-          temperaturaInput.type = 'number';
-          temperaturaInput.placeholder = 'Temperatura (°C)';
-          temperaturaInput.required = true;
-  
-          const presionInput = document.createElement('input');
-          presionInput.type = 'text';
-          presionInput.placeholder = 'Presión (mmHg)';
-          presionInput.required = true;
-  
-          form.appendChild(alturaInput);
-          form.appendChild(pesoInput);
-          form.appendChild(temperaturaInput);
-          form.appendChild(presionInput);
-  
-          // Campos para los datos dinámicos (clave y valor)
-          for (let i = 0; i < 3; i++) {
-            const claveInput = document.createElement('input');
-            claveInput.type = 'text';
-            claveInput.placeholder = `Clave ${i + 1} (Ej: caries)`;
-  
-            const valorInput = document.createElement('input');
-            valorInput.type = 'text';
-            valorInput.placeholder = `Valor ${i + 1} (Ej: 4)`;
-  
-            const containerClaveValor = document.createElement('div');
-            containerClaveValor.style.display = 'flex';
-            containerClaveValor.style.gap = '10px'; // Espacio entre clave y valor
-  
-            containerClaveValor.appendChild(claveInput);
-            containerClaveValor.appendChild(valorInput);
-  
-            form.appendChild(containerClaveValor);
-          }
-  
-          // Estilos CSS en línea para los inputs
           form.style.display = 'flex';
           form.style.flexDirection = 'column';
           form.style.alignItems = 'center';
           form.style.gap = '10px';
-          form.style.maxWidth = '300px'; // Máximo ancho
+          form.style.maxWidth = '300px';
           form.style.margin = 'auto';
   
-          // Estilos para los inputs individuales
-          const inputs = form.querySelectorAll('input');
-          inputs.forEach((input: HTMLElement) => {
-            input.style.width = '100%';
-            input.style.padding = '10px';
-            input.style.marginBottom = '10px';
-            input.style.border = '1px solid #ccc';
-            input.style.borderRadius = '5px';
-            input.style.fontSize = '14px';
-          });
+          // Campos fijos
+          camposFijos.forEach(placeholder => form.appendChild(crearCampoInput('number', placeholder)));
   
-          // Añadir el formulario al contenedor
-          container.appendChild(form);
-  
-          // Crear un contenedor adicional para envolver los botones
-          const buttonContainer = document.createElement('div');
-          buttonContainer.style.display = 'flex';
-          buttonContainer.style.justifyContent = 'center';
-          buttonContainer.style.gap = '10px';
-          buttonContainer.style.marginTop = '20px'; // Espacio para separar los botones
-  
-          // Añadir los botones
-          const confirmButton = Swal.getConfirmButton();
-          const cancelButton = Swal.getCancelButton();
-  
-          if (confirmButton && cancelButton) {
-            buttonContainer.appendChild(confirmButton);
-            buttonContainer.appendChild(cancelButton);
-            container.appendChild(buttonContainer);
+          // Campos dinámicos
+          form.appendChild(crearCampoRango());
+          form.appendChild(crearCampoNum());
+          for (let i = 0; i < 3; i++) {
+            form.appendChild(crearCampoClaveValor(`Clave ${i + 1} (Ej: caries)`, `Valor ${i + 1} (Ej: 4)`));
           }
-        } else {
-          console.error('No se pudo acceder al popup de SweetAlert');
+  
+          // Agregar campo dinámico de Sí/No
+          form.appendChild(crearCampoSiNo());
+  
+          container.appendChild(form);
         }
       }
     }).then((result) => {
       if (result.isConfirmed) {
         const reseña = result.value;
-        console.log('Reseña del turno:', reseña);
+        const historiaClinica: HistoriaClinica = {};  
   
-        // Obtener los valores de la historia clínica
-        const altura = (document.querySelector('input[placeholder="Altura (cm)"]') as HTMLInputElement).value;
-        const peso = (document.querySelector('input[placeholder="Peso (kg)"]') as HTMLInputElement).value;
-        const temperatura = (document.querySelector('input[placeholder="Temperatura (°C)"]') as HTMLInputElement).value;
-        const presion = (document.querySelector('input[placeholder="Presión (mmHg)"]') as HTMLInputElement).value;
+        // Recoger datos fijos
+        for (let placeholder of camposFijos) {
+          const input = document.querySelector(`input[placeholder="${placeholder}"]`) as HTMLInputElement;
+          if (!input.value) {
+            Swal.fire({
+              title: 'Error',
+              text: 'Todos los campos fijos de la historia clínica son obligatorios.',
+              icon: 'error',
+              confirmButtonText: 'Cerrar'
+            });
+            return;
+          }
+          historiaClinica[placeholder] = parseFloat(input.value);
+        }
   
-        // Obtener los datos dinámicos
-        const datosDinamicos: any = {};
+        // Recoger campo dinámico (rango) y su clave
+        const claveRango = (document.querySelector('input[placeholder="Clave para el rango (Ej: nivel)"]') as HTMLInputElement).value;
+        const rangoValue = (document.querySelector('input[type="range"]') as HTMLInputElement).value;
+        if (claveRango && rangoValue) {
+          historiaClinica[claveRango] = rangoValue;
+        }
+  
+        // Recoger campo numérico y su clave
+        const claveNum = (document.querySelector('input[placeholder="Clave para el número (Ej: cantidad)"]') as HTMLInputElement).value;
+        const numValue = (document.querySelector('input[type="number"]') as HTMLInputElement).value;
+        if (claveNum && numValue) {
+          historiaClinica[claveNum] = parseFloat(numValue);
+        }
+  
+        // Recoger datos clave/valor
         for (let i = 0; i < 3; i++) {
           const clave = (document.querySelector(`input[placeholder="Clave ${i + 1} (Ej: caries)"]`) as HTMLInputElement).value;
           const valor = (document.querySelector(`input[placeholder="Valor ${i + 1} (Ej: 4)"]`) as HTMLInputElement).value;
-          if (clave && valor) {
-            datosDinamicos[clave] = valor;
-          }
+          if (clave && valor) historiaClinica[clave] = valor;
         }
   
-        // Validar que los campos fijos estén completos
-        if (!altura || !peso || !temperatura || !presion) {
-          Swal.fire({
-            title: 'Error',
-            text: 'Todos los campos fijos de la historia clínica son obligatorios.',
-            icon: 'error',
-            confirmButtonText: 'Cerrar'
-          });
-          return;
+        // Recoger datos del campo Sí/No
+        const claveSiNo = (document.querySelector('input[placeholder="Clave para Sí/No"]') as HTMLInputElement).value;
+        const valorSiNo = (document.querySelector('select') as HTMLSelectElement).value;
+        if (claveSiNo && valorSiNo) {
+          historiaClinica[claveSiNo] = valorSiNo;
         }
   
-        // Crear el objeto de la historia clínica
-        const historiaClinica = {
-          altura: parseFloat(altura),
-          peso: parseFloat(peso),
-          temperatura: parseFloat(temperatura),
-          presion: presion,
-          ...datosDinamicos // Agregar los datos dinámicos si existen
-        };
-  
-        // Llamar a la función para finalizar el turno y guardar la historia clínica
-        this.firebaseSvc.finalizarHorario(this.uid, horario, reseña, historiaClinica)
+        this.firebaseSvc.finalizarHorario(this.uid, horario.id, reseña, historiaClinica)
           .then(() => {
-            this.loadHorarios(); // Recargar los horarios
+            this.loadHorarios();
           })
-          .catch((error) => {
-            console.error('Error al finalizar el turno:', error);
+          .catch(() => {
             Swal.fire({
               title: 'Error',
               text: 'Hubo un problema al finalizar el turno.',
@@ -647,7 +683,34 @@ export class MisTurnosComponent {
   
   
   
-  
-  
-  
+
+
+  onCaptchaCancelarPaciente(turno: any): () => Promise<void>{
+    return () => this.cancelarPaciente(turno);
+  }
+
+  onCaptchaCancelar(turno: any): () => Promise<void>{
+    return () => this.cancelarTurno(turno);
+  }
+
+  onCaptchaRechazar(turno: any): () =>Promise<void>{
+    return () => this.rechazarTurno(turno);
+  }
+
+  onCaptchaAceptar(turno: any):() => Promise<void>{
+    return () => this.aceptar(turno);
+  }
+
+  onCaptchaFinalizar(turno: any):() => Promise<void>{
+    return () => this.finalizar(turno);
+  }
+
+  onCaptchaEncuesta(turno: any):() => Promise<void>{
+    return () => this.completarEncuestaPaciente(turno);
+  }
+
+  onCaptchaCalificar(turno: any):() => Promise<void>{
+    return () => this.completarCalifacionPaciente(turno);
+  }
+
 }

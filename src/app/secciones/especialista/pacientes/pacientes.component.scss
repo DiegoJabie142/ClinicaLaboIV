@@ -1,0 +1,74 @@
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centra las tarjetas horizontalmente */
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .patient-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+    width: 400px; /* Establece un tamaño fijo para las tarjetas */
+  }
+  
+  .patient-card:hover {
+    transform: translateY(-10px);
+  }
+  
+  .card-header {
+    display: flex;
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .profile-pic {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+  }
+  
+  .patient-info {
+    flex-grow: 1;
+  }
+  
+  .patient-info h3 {
+    font-size: 1.2rem;
+    margin: 0;
+    color: #333;
+  }
+  
+  .patient-info p {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 5px 0;
+  }
+  
+  .card-actions {
+    padding: 20px;
+    text-align: center;
+    background-color: #f9f9f9;
+    border-top: 1px solid #f0f0f0;
+    height: 100%;
+  }
+  
+  .action-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #0078D4;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .action-button:hover {
+    background-color: #005bb5;
+  }
+  

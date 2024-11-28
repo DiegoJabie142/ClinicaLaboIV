@@ -1,0 +1,29 @@
+.btn-descargar {
+    background-color: #4CAF50; /* Color de fondo verde */
+    color: white; /* Texto blanco */
+    border: none; /* Eliminar el borde predeterminado */
+    padding: 12px 24px; /* Espaciado interno (arriba/abajo, izquierda/derecha) */
+    text-align: center; /* Alineación del texto */
+    text-decoration: none; /* Eliminar subrayado */
+    display: inline-block; /* Mostrar en línea */
+    font-size: 16px; /* Tamaño de fuente */
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer; /* Cambiar cursor cuando se pasa sobre el botón */
+    transition: background-color 0.3s, transform 0.3s; /* Transiciones suaves */
+  }
+  
+  /* Efecto al pasar el ratón sobre el botón */
+  .btn-descargar:hover {
+    background-color: #45a049; /* Color más oscuro al pasar el ratón */
+    transform: translateY(-2px); /* Efecto de levantar el botón */
+  }
+  
+  /* Efecto al hacer clic sobre el botón */
+  .btn-descargar:active {
+    transform: translateY(2px); /* Efecto de presionar el botón */
+  }
+  
+  /* Estilo para el texto en negrita */
+  .btn-descargar strong {
+    font-weight: bold;
+  }

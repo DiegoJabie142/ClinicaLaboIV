@@ -106,3 +106,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .pos-cerrar-sesion:active {
   background-color: #9a0007; /* Rojo más oscuro al hacer clic */
 }
+
+
+.tooltip {
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0.9;
+}

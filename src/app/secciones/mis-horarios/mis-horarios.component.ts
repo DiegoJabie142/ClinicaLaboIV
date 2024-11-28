@@ -2,80 +2,72 @@ import { Component, inject } from '@angular/core';
 import { FirebaseService } from '../../services/firebase.service';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HeaderComponent } from '../../shared/components/header/header.component';
+import Swal from 'sweetalert2';
+import { CaptchaDirective } from '../../directivas/captcha.directive';
+
+interface Horario {
+  startTime: string;
+  endTime: string;
+}
 
 @Component({
   selector: 'app-mis-horarios',
   standalone: true,
-  imports: [NgFor,NgIf,FormsModule, HeaderComponent, CommonModule],
+  imports: [NgFor,NgIf,FormsModule, CommonModule, CaptchaDirective],
   templateUrl: './mis-horarios.component.html',
   styleUrl: './mis-horarios.component.scss'
 })
+
 export class MisHorariosComponent {
 
   horarios: any[] = [];  // Para almacenar los horarios recuperados
+
   uid: string = '';  // Variable para almacenar el UID
 
   title = 'MyClinic';
+  
   headerLinks: Array<{ label: string; route: string }> = [];
 
-  currentDate: Date = new Date();
-  availableDays: { [key: string]: number[] } = {};  // Guardaremos los días agrupados por mes
-  availableDates: Date[] = [];  // Guardamos las fechas completas
-  selectedDays: { [key: number]: boolean } = {};  // Para manejar los días seleccionados
-  // Ajustar el modelo para almacenar horarios de inicio y fin por día
-  availableTimes: { [day: string]: { start: string; end: string } } = {
-    1: { start: '00:00', end: '23:59' },
-    2: { start: '00:00', end: '23:59' },
-    3: { start: '00:00', end: '23:59' },
-    4: { start: '00:00', end: '23:59' },
-    5: { start: '00:00', end: '23:59' },
-    6: { start: '00:00', end: '23:59' },
-    7: { start: '00:00', end: '23:59' },
-    8: { start: '00:00', end: '23:59' },
-    9: { start: '00:00', end: '23:59' },
-    10: { start: '00:00', end: '23:59' },
-    11: { start: '00:00', end: '23:59' },
-    12: { start: '00:00', end: '23:59' },
-    13: { start: '00:00', end: '23:59' },
-    14: { start: '00:00', end: '23:59' },
-    15: { start: '00:00', end: '23:59' },
-    16: { start: '00:00', end: '23:59' },
-    17: { start: '00:00', end: '23:59' },
-    18: { start: '00:00', end: '23:59' },
-    19: { start: '00:00', end: '23:59' },
-    20: { start: '00:00', end: '23:59' },
-    21: { start: '00:00', end: '23:59' },
-    22: { start: '00:00', end: '23:59' },
-    23: { start: '00:00', end: '23:59' },
-    24: { start: '00:00', end: '23:59' },
-    25: { start: '00:00', end: '23:59' },
-    26: { start: '00:00', end: '23:59' },
-    27: { start: '00:00', end: '23:59' },
-    28: { start: '00:00', end: '23:59' },
-    29: { start: '00:00', end: '23:59' },
-    30: { start: '00:00', end: '23:59' },
-    31: { start: '00:00', end: '23:59' },
-  };
+  newHorario: any = {};  // Inicialización de newHorario
+
+  addedHorarios: any = {};  // Almacena los horarios añadidos
+
+  availableDays: string[] = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+
+  especialidadesConDuracion: any[] = [];
+
+  captchaRequired: boolean = false;
+
   availableTimeSlots: string[] = [
-    '00:00','01:00', '02:00', '03:00', '04:00', '05:00', '06:00', 
-    '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', 
-    '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', 
-    '21:00', '22:00', '23:00','24:00',
+    '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', 
+    '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'
   ];
+  
+  getAvailableTimeSlots(day: string): string[] {
+    if (day === 'sabado') {
+      return ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00'];
+    }
+    return this.availableTimeSlots;
+  }
 
   isLoggedIn:boolean = false;
   firebaseSvc = inject(FirebaseService);
 
-  constructor() {}
+  constructor() {
+    this.availableDays.forEach(day => {
+      this.newHorario[day] = { startTime: '', endTime: '' }; // Inicializar startTime y endTime
+    });
+  }
 
   async ngOnInit(): Promise<void> {
-    // Generar las fechas de los próximos 15 días
-    this.generateAvailableDays();
-    this.updateHeaderLinks();
-    this.isLoggedIn= await this.estaLoggeado();
     this.getUidFromLocalStorage();  // Llamar para obtener el UID
     this.loadHorarios();  // Llamar la función para cargar los horarios
+    this.obtenerEspecialidades();
+    this.availableDays.forEach(day => {
+      this.newHorario[day] = { startTime: '', endTime: '' };
+      this.addedHorarios[day] = [];
+    });
+    
   }
 
 
@@ -88,84 +80,10 @@ export class MisHorariosComponent {
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }
-    this.updateHeaderLinks();
-  }
-
-  async estaLoggeado(): Promise<boolean> {
-    return  await this.firebaseSvc.isUserLoggedIn();
   }
 
 
-  updateHeaderLinks() {
-    // Leer el rol desde localStorage
-    const user = localStorage.getItem('user');
-    const role = user ? JSON.parse(user).role : null;
 
-    // Configurar los links según el rol
-    if(role === 'administrador') {
-      this.headerLinks = [
-        { label: 'Home', route: '/home' },
-        { label: 'Sección Usuarios', route: '/users' },
-        { label: 'Turnos', route: '/mis-turnos' },
-      ];
-    } else if (role === 'especialista') {
-      this.headerLinks = [
-        { label: 'Home', route: '/home' },
-        { label: 'Mi Perfil', route: '/mi-perfil' },
-        { label: 'Mis Horarios', route: '/mis-horarios' },
-        { label: 'Mis Turnos', route: '/mis-turnos' },
-      ];
-    } else if (role === 'paciente') {
-      this.headerLinks = [
-        { label: 'Home', route: '/home' },
-        { label: 'Mi Perfil', route: '/mi-perfil' },
-        { label: 'Solicitar turno', route: '/solicitar-turno' },
-        { label: 'Mis Turnos', route: '/mis-turnos' },
-      ];
-    } else {
-      this.headerLinks = [
-        { label: 'Home', route: '/home' },
-        { label: 'Iniciar Sesión', route: '/login' },
-        { label: 'Registrarse', route: '/sign-up/select' }
-      ];
-    }
-  }
-
-  getFirstHalfMonths(): string[] {
-    const months = Object.keys(this.availableDays);
-    return months.slice(0, Math.ceil(months.length / 2));
-  }
-  
-  getSecondHalfMonths(): string[] {
-    const months = Object.keys(this.availableDays);
-    return months.slice(Math.ceil(months.length / 2));
-  }
-
-  // Método para generar los días y fechas
-  generateAvailableDays() {
-
-    this.availableDays = {};  // Limpiar el objeto de días agrupados por mes
-    this.availableDates = [];  // Limpiar las fechas guardadas
-
-    // Generar días desde hoy hasta 15 días después
-    for (let i = 0; i < 15; i++) {
-      const newDate = new Date(this.currentDate);  // Crear una nueva instancia de la fecha base
-      newDate.setDate(this.currentDate.getDate() + i);  // Sumar el día correspondiente
-      const monthName = this.getMonthName(newDate);  // Obtener el nombre del mes
-
-      // Si no existe una entrada para este mes, inicializar un array vacío
-      if (!this.availableDays[monthName]) {
-        this.availableDays[monthName] = [];
-      }
-
-      // Agregar el día al mes correspondiente
-      this.availableDays[monthName].push(newDate.getDate());
-      this.availableDates.push(newDate); // Guardamos la fecha completa
-    }
-  }
-  
-
-  // Método para obtener el nombre del mes para una fecha específica
   getMonthName(date: Date): string {
     const months = [
       'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -173,48 +91,6 @@ export class MisHorariosComponent {
     ];
     return months[date.getMonth()];  // Obtenemos el mes correspondiente para la fecha dada
   }
-
-  async submitHorarios(horariosForm: any) {
-    const horarios: { date: string; timeRange: { start: string; end: string } }[] = [];
-
-    this.availableDates.forEach((date) => {
-      const day = date.getDate();
-      const month = date.getMonth() + 1;
-      const year = date.getFullYear();
-
-      if (this.selectedDays[day]) {
-        const timeRange = this.availableTimes[day];
-
-        // Validación para asegurar que hay un inicio y fin seleccionados
-        if (timeRange.start && timeRange.end && timeRange.start !== timeRange.end) {
-          horarios.push({
-            date: `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`,
-            timeRange: { start: timeRange.start, end: timeRange.end },
-          });
-        } else {
-          console.log(`Horarios no válidos para el día ${day}`);
-        }
-      }
-    });
-
-    if (horarios.length === 0) {
-      console.log('No se han seleccionado horarios');
-      return;
-    }
-
-    try {
-      await this.firebaseSvc.saveEspecialistaHorarios(this.uid, horarios);
-      console.log('Horarios guardados con éxito');
-    } catch (error) {
-      console.error('Error al guardar los horarios', error);
-    }finally{
-      horariosForm.reset();
-      this.loadHorarios();
-    }
-
-
-}
-  
 
   getUidFromLocalStorage(): void {
     const user = JSON.parse(localStorage.getItem('user') || '{}');  // Obtener el usuario desde localStorage
@@ -225,41 +101,217 @@ export class MisHorariosComponent {
     }
   }
 
-  // Método para filtrar los horarios de fin disponibles, tomando el horario de inicio seleccionado
-  getFilteredEndTimes(day: number): string[] {
-    const startTime = this.availableTimes[day]?.start;
-    if (startTime) {
-      const startIndex = this.availableTimeSlots.indexOf(startTime);
-      return this.availableTimeSlots.slice(startIndex + 1);  // Retorna las horas después del inicio
-    }
-    return this.availableTimeSlots;  // Si no hay hora de inicio, todas las opciones son válidas
-  }
-
-  // Función para validar si la hora de fin es mayor a la de inicio
-  isEndTimeInvalid(day: number): boolean {
-    const startTime = this.availableTimes[day]?.start;
-    const endTime = this.availableTimes[day]?.end;
-
-    if (startTime && endTime) {
-      const startIndex = this.availableTimeSlots.indexOf(startTime);
-      const endIndex = this.availableTimeSlots.indexOf(endTime);
-      return endIndex <= startIndex;  // Si el índice de la hora de fin es menor o igual al de inicio
-    }
-    return false;  // No hay validación si no se han seleccionado ambos horarios
-  }
-
-
-  // Cargar los horarios del especialista utilizando el servicio
+  
   async loadHorarios(): Promise<void> {
     if (this.uid) {
+      // Mostrar el Swal de carga
+      const swalLoading = Swal.fire({
+        title: 'Cargando horarios...',
+        text: 'Por favor espera mientras se cargan los horarios.',
+        icon: 'info',
+        showConfirmButton: false, // No se muestra el botón de confirmación
+        didOpen: () => {
+          Swal.showLoading();  // Mostrar el spinner de carga
+        }
+      });
+  
       try {
-        this.horarios = await this.firebaseSvc.getEspecialistaHorarios(this.uid);
+        const horariosGuardados = await this.firebaseSvc.getEspecialistaHorarios(this.uid);
+  
+        // Verificar si la estructura es un objeto de días con un array de horarios
+        if (typeof horariosGuardados === 'object') {
+          this.availableDays.forEach(day => {
+            const horariosDelDia = horariosGuardados[day]; // Obtener los horarios para cada día
+  
+            // Solo continuar si existen horarios para el día
+            if (Array.isArray(horariosDelDia) && horariosDelDia.length > 0) {
+              // Si hay horarios para el día, los cargamos todos en un array
+              this.newHorario[day] = horariosDelDia.map(horario => ({
+                startTime: horario.startTime || '',
+                endTime: horario.endTime || ''
+              }));
+
+  
+              // Llamamos a la función addHorarioForDay para agregar los horarios al array correspondiente
+              this.addHorarioForDay(day);
+            }
+          });
+        } else {
+          console.error('Estructura de horarios inesperada');
+        }
+  
       } catch (error) {
         console.error('Error al cargar los horarios', error);
+        // Si hay un error, mostrar un mensaje de error con Swal
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un problema al cargar los horarios.',
+          icon: 'error'
+        });
+      } finally {
+        // Cerrar el loading al terminar la carga o si hay un error
+        Swal.close();
       }
+  
     } else {
       console.error('No se puede cargar los horarios porque no hay UID');
     }
   }
   
+
+  removeHorario(day: string, index: number): void {
+    this.addedHorarios[day].splice(index, 1);
+  }
+
+  async submitHorarios(): Promise<void> { 
+    try {
+  
+      // Guardar los horarios en Firebase
+      await this.firebaseSvc.saveEspecialistaHorario(this.uid, this.addedHorarios);
+  
+      // Limpiar las listas de horarios
+      this.addedHorarios = {}; // Limpia la lista de horarios añadidos
+      this.horarios = [];       // Limpia la lista de horarios recuperados
+    } catch (error) {
+      console.error('Error al guardar los horarios:', error);
+    }
+  
+    // Recargar los horarios después de haberlos guardado
+    await this.loadHorarios();
+  }
+  
+
+
+  addHorarioForDay(day: string): void {
+    // Comprobamos si hay horarios válidos para el día
+    if (Array.isArray(this.newHorario[day]) && this.newHorario[day].length > 0) {
+      // Si el día ya tiene horarios, los añadimos a addedHorarios
+      if (!this.addedHorarios[day]) {
+        this.addedHorarios[day] = []; // Inicializa el array si no existe
+      }
+      // Iterar sobre el array de horarios y añadir cada uno
+      this.newHorario[day].forEach((horario: Horario) => { // Definir explícitamente el tipo de 'horario'
+        if (horario.startTime && horario.endTime) {
+          this.addedHorarios[day].push({
+            startTime: horario.startTime,
+            endTime: horario.endTime
+          });
+        }
+      });
+    }
+  }
+  
+
+  addHorarioForDay2(day: string): void {
+    if (this.newHorario[day] && this.newHorario[day].startTime && this.newHorario[day].endTime) {
+
+      // Validación: El startTime debe ser menor que el endTime
+      if (this.isStartTimeGreaterThanEndTime(this.newHorario[day].startTime, this.newHorario[day].endTime)) {
+        // Mostrar el error si startTime es mayor que endTime
+        Swal.fire({
+          icon: 'error',
+          title: '¡Error!',
+          text: 'La hora de inicio debe ser menor que la hora de fin.',
+        });
+        return; // Detenemos la ejecución si el horario es inválido
+      }
+
+      if (!this.addedHorarios[day]) {
+        this.addedHorarios[day] = [];
+      }
+
+      // Verificamos si el horario que estamos agregando se puede combinar con el último horario
+      const isOverlapping = this.addedHorarios[day].some((horario: Horario) =>
+        (this.newHorario[day].startTime < horario.endTime && this.newHorario[day].endTime > horario.startTime)
+      );
+
+      if (isOverlapping) {
+        // Mostrar un SweetAlert si hay solapamiento
+        Swal.fire({
+          icon: 'error',
+          title: '¡Error!',
+          text: 'El horario se solapa con otro horario existente.',
+        });
+        return; // No agregamos el horario si se solapa
+      }
+
+      const lastHorario = this.addedHorarios[day].slice(-1)[0]; // Último horario agregado
+
+      if (lastHorario && lastHorario.endTime === this.newHorario[day].startTime) {
+        lastHorario.endTime = this.newHorario[day].endTime;
+      } else {
+        this.addedHorarios[day].push({
+          startTime: this.newHorario[day].startTime,
+          endTime: this.newHorario[day].endTime
+        });
+      }
+
+      this.newHorario[day] = { startTime: '', endTime: '' };
+    }
+  }
+
+  // Función auxiliar para comparar las horas
+  isStartTimeGreaterThanEndTime(startTime: string, endTime: string): boolean {
+    const start = this.timeToMinutes(startTime);
+    const end = this.timeToMinutes(endTime);
+    return start >= end;
+  }
+
+  // Función para convertir el tiempo (HH:MM) a minutos
+  timeToMinutes(time: string): number {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  }
+  
+
+  async obtenerEspecialidades(){
+    this.especialidadesConDuracion = await this.firebaseSvc.getEspecialidadesConDuracion(this.uid);
+  }
+
+
+  async onDuracionChange(especialidad: any): Promise<void> {
+    // Muestra el loading de Swal.fire
+    const swal = Swal.fire({
+      title: 'Cargando...',
+      text: 'Actualizando la duración...',
+      icon: 'info',
+      showConfirmButton: false, // Sin botón de confirmación
+      willOpen: () => {
+        Swal.showLoading(); // Muestra el icono de carga
+      }
+    });
+  
+    try {
+      // Esperar a que se actualice la duración de la especialidad
+      await this.firebaseSvc.actualizarDuracionEspecialidad(this.uid, especialidad);
+  
+      // Esperar a que se obtengan las especialidades
+      await this.obtenerEspecialidades();
+  
+      // Una vez que las operaciones se completan, cerrar el Swal
+      Swal.close();
+  
+    } catch (error) {
+      console.error('Error al cambiar la duración de la especialidad:', error);
+      // En caso de error, cerrar el loading y mostrar un mensaje de error
+      Swal.update({
+        title: 'Error',
+        text: 'Hubo un problema al cambiar la duración de la especialidad.',
+        icon: 'error',
+        showConfirmButton: true,
+      });
+    }
+  }
+
+  //onCaptcha(horario: any): () => Promise<void> {
+    //return () => this.seleccionarHorario(horario);
+  //}
+
+  onCaptchaSubmitHorario(): () => Promise<void>{
+    return () => this.submitHorarios();
+  }
+  
+  onCaptchaonDuracionChange(especialidad: any): () => Promise<void>{
+    return () => this.onDuracionChange(especialidad);
+  }
 }

@@ -2,7 +2,13 @@
   [title]="'MyClinic'"
 ></app-header>
 
-<div class="profile-section" *ngIf="userData">
+<button
+  class="btn-flotante"
+  (click)="cambiarTema()">
+  Cambiar Tema
+</button>
+
+<div class="profile-section" *ngIf="userData" [appToggleTheme]="modoOscuro">
   <div class="profile-card">
     <div class="profile-images">
       <div class="profile-image">
@@ -18,19 +24,34 @@
       <p><strong>DNI: </strong>{{userData?.dni}}</p>
       <p><strong>Email: </strong> {{userData?.email}}</p>
       <p><strong *ngIf="userData?.socialWork">Obra Social: </strong>{{userData?.socialWork}}</p>
-      <p><strong *ngIf="userData?.specialities">Especialidades: </strong>{{userData?.specialities}}</p>
+      <p *ngIf="userData?.specialities"><strong>Especialidades:</strong> {{ userData.specialities.join(', ') }}.</p>
     </div>
   </div>
 
-  <div *ngIf="historiaClinica" style="background-color: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px; margin: 20px;">
+  <div *ngIf="historiaClinica.length > 0" style="background-color: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px; margin: 20px;">
     <h2>Historia Clínica</h2>
     <div class="buttons-container">
-      <button *ngFor="let atencionId of atencionIds" 
-              (click)="mostrarDetallesAtencion(atencionId)">
-        {{ historiaClinica[atencionId].horarioData.date }} 
-        Inicio: {{ historiaClinica[atencionId].horarioData.start }} - 
-        Fin: {{ historiaClinica[atencionId].horarioData.end }}
+      <button *ngFor="let historia of historiaClinica" (click)="mostrarHistoriaClinica(historia)">
+        {{ historia.fecha }}  -  {{ historia.horaInicio }}  -  {{ historia.horaFin }}
       </button>
+      <button (click)="descargarHistoriasClinicasPDF()" style="margin-top: 20px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px;">
+        Descargar Historias Clínicas (PDF)
+      </button>
+      <div *ngFor="let especialidad of historiasSegunEspecialidad">
+        <button (click)="descargarHistoriasClinicasPDFSegunEspecialidad(especialidad.especialidad)" 
+                style="margin-top: 20px; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px;">
+          Descargar Historias Clínicas (PDF) - {{ especialidad.especialidad }}
+        </button>
+      </div>
     </div>
+
+  </div>
+  <div *ngIf="historiaClinica.length == 0 && role=='paciente'" style="width: 100%; display: flex; justify-content: center; margin-top: 30px;">
+    <h1>No tienes historia clínica todavía.</h1>
+  </div>
+  
+
+  <div *ngIf="role=='especialista'" style="width: 1200px;">
+    <app-mis-horarios></app-mis-horarios>   
   </div>
 </div>

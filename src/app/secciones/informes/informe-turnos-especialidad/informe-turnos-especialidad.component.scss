@@ -1,0 +1,181 @@
+// General styles
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .chart-container {
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 20px auto; // Center and stack on top
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  canvas {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  
+  // Table styles
+  .log-table {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto; // Center and stack on top
+    border-collapse: collapse;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+  
+      &:nth-child(3), &:nth-child(4) {
+        text-align: center;
+      }
+    }
+  
+    th {
+      background-color: #007BFF;
+      color: #ffffff;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+  
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+  
+    td {
+      font-size: 14px;
+      color: #333;
+    }
+  }
+  
+  // Empty state
+  .empty-state {
+    margin: 20px auto;
+    font-size: 16px;
+    color: #777;
+    text-align: center;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+  }
+  
+  // Flex container for responsive stacking
+  div[style*="display: flex"] {
+    flex-direction: column; // Stack vertically
+    align-items: center;
+  }
+  
+  // Responsive design
+  @media screen and (max-width: 768px) {
+    .chart-container,
+    .log-table {
+      width: 90%;
+      margin: 10px auto;
+    }
+  
+    .log-table th, .log-table td {
+      padding: 8px;
+    }
+  }
+  
+
+  #turnosChart {
+    width: 80%;
+    height: 400px;
+    margin: 20px 0;
+  }
+
+  .btn-descargar {
+    background-color: #4CAF50; /* Color de fondo verde */
+    color: white; /* Texto blanco */
+    border: none; /* Eliminar el borde predeterminado */
+    padding: 12px 24px; /* Espaciado interno (arriba/abajo, izquierda/derecha) */
+    text-align: center; /* Alineación del texto */
+    text-decoration: none; /* Eliminar subrayado */
+    display: inline-block; /* Mostrar en línea */
+    font-size: 16px; /* Tamaño de fuente */
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer; /* Cambiar cursor cuando se pasa sobre el botón */
+    transition: background-color 0.3s, transform 0.3s; /* Transiciones suaves */
+  }
+  
+  /* Efecto al pasar el ratón sobre el botón */
+  .btn-descargar:hover {
+    background-color: #45a049; /* Color más oscuro al pasar el ratón */
+    transform: translateY(-2px); /* Efecto de levantar el botón */
+  }
+  
+  /* Efecto al hacer clic sobre el botón */
+  .btn-descargar:active {
+    transform: translateY(2px); /* Efecto de presionar el botón */
+  }
+  
+  /* Estilo para el texto en negrita */
+  .btn-descargar strong {
+    font-weight: bold;
+  }
+
+  /* Estilo principal para la tabla */
+.tabla-turnos {
+  width: 80%; /* Establece el ancho de la tabla */
+  margin: 20px auto; /* Centra la tabla en la página con un margen superior */
+  border-collapse: collapse; /* Elimina los bordes duplicados entre celdas */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Agrega una sombra sutil alrededor de la tabla */
+}
+
+/* Estilo para las celdas de encabezado */
+.tabla-cabecera {
+  background-color: #4CAF50; /* Color de fondo para la cabecera */
+  color: white; /* Color del texto */
+  padding: 12px; /* Espaciado dentro de las celdas */
+  text-align: left; /* Alineación del texto */
+  font-weight: bold; /* Resalta el texto */
+  border-bottom: 2px solid #ddd; /* Línea divisoria inferior */
+}
+
+/* Estilo para las celdas de datos */
+.tabla-dato {
+  padding: 10px; /* Espaciado dentro de las celdas */
+  text-align: left; /* Alineación del texto */
+  border-bottom: 1px solid #ddd; /* Línea divisoria entre filas */
+}
+
+/* Estilo para las filas impares */
+.tabla-fila:nth-child(odd) {
+  background-color: #f9f9f9; /* Color de fondo para filas impares */
+}
+
+/* Estilo para las filas al pasar el ratón por encima */
+.tabla-fila:hover {
+  background-color: #f1f1f1; /* Cambio de color al pasar el ratón */
+}
+
+/* Estilo para la tabla en pantallas pequeñas */
+@media screen and (max-width: 768px) {
+  .tabla-turnos {
+    width: 100%; /* La tabla ocupará todo el ancho de la pantalla en pantallas pequeñas */
+  }
+
+  .tabla-cabecera {
+    font-size: 14px; /* Reduce el tamaño de la fuente en pantallas pequeñas */
+  }
+
+  .tabla-dato {
+    font-size: 14px; /* Reduce el tamaño de la fuente en pantallas pequeñas */
+  }
+}

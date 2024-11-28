@@ -1,0 +1,32 @@
+<div id="contenidoHtml">
+    <div class="chart-container" style="position: relative; height:400px; width:600px">
+        <canvas #logChart id="logChart"></canvas>
+    </div>
+
+    <table *ngIf="logs.length > 0" class="log-table">
+        <thead>
+        <tr>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Email</th>
+            <th>Fecha de Ingreso</th>
+            <th>Hora de Ingreso</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let log of logs">
+            <td [ngStyle]="{'background-color': log.role | roleBackgroundColor}">{{ log.name }} {{ log.lastName }}</td>
+            <td [ngStyle]="{'background-color': log.role | roleBackgroundColor}">{{ log.role }}</td>
+            <td [ngStyle]="{'background-color': log.role | roleBackgroundColor}">{{ log.email }}</td>
+            <td [ngStyle]="{'background-color': log.role | roleBackgroundColor}">{{ log.timestamp | date:'dd/MM/yyyy' }}</td>
+            <td [ngStyle]="{'background-color': log.role | roleBackgroundColor}">{{ log.timestamp | date:'HH:mm:ss' }}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div style="width: 100%; display: flex; justify-content: center; margin-top: 50px; margin-bottom: 50px;">
+    <button (click)="descargarPdf()" class="btn-descargar">
+        Descargar como PDF
+    </button>   
+</div>

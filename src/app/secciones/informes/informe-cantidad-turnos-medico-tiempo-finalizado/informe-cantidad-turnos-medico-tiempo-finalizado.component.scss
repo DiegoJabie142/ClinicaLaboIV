@@ -1,0 +1,125 @@
+/* Estilos generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .form-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 500px;
+    margin-top: 50px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    display: inline-block;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333;
+    margin-top: 5px;
+  }
+  
+  .input-field:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  
+  .submit-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .submit-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .turnos-informe {
+    margin-top: 20px;
+  }
+  
+  .informe-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 10px;
+  }
+  
+  .turnos-list {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .turno-item {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .turno-item:nth-child(even) {
+    background-color: #e9ecef;
+  }
+  
+  .btn-descargar {
+    background-color: #4CAF50; /* Color de fondo verde */
+    color: white; /* Texto blanco */
+    border: none; /* Eliminar el borde predeterminado */
+    padding: 12px 24px; /* Espaciado interno (arriba/abajo, izquierda/derecha) */
+    text-align: center; /* Alineación del texto */
+    text-decoration: none; /* Eliminar subrayado */
+    display: inline-block; /* Mostrar en línea */
+    font-size: 16px; /* Tamaño de fuente */
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer; /* Cambiar cursor cuando se pasa sobre el botón */
+    transition: background-color 0.3s, transform 0.3s; /* Transiciones suaves */
+  }
+  
+  /* Efecto al pasar el ratón sobre el botón */
+  .btn-descargar:hover {
+    background-color: #45a049; /* Color más oscuro al pasar el ratón */
+    transform: translateY(-2px); /* Efecto de levantar el botón */
+  }
+  
+  /* Efecto al hacer clic sobre el botón */
+  .btn-descargar:active {
+    transform: translateY(2px); /* Efecto de presionar el botón */
+  }
+  
+  /* Estilo para el texto en negrita */
+  .btn-descargar strong {
+    font-weight: bold;
+  }

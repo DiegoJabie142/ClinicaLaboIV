@@ -7,13 +7,25 @@ import { MatButton } from '@angular/material/button';
 import { Router, RouterModule } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { FirebaseService } from '../../../services/firebase.service';
+import { trigger, transition, animate, style } from '@angular/animations';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
   imports: [ HeaderComponent, CustomInputComponent, MatButton, FormsModule, ReactiveFormsModule, NgIf],
   templateUrl: './auth.component.html',
-  styleUrl: './auth.component.scss'
+  styleUrl: './auth.component.scss',
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('500ms 0s', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('500ms 0s', style({ opacity: 0 }))
+      ])
+    ])
+  ]
 })
 
 
@@ -21,6 +33,12 @@ export class AuthComponent {
 
   constructor(private router: Router){}
   private fb = inject(FormBuilder);
+
+  isVisible = true;
+
+  toggleVisibility() {
+    this.isVisible = !this.isVisible;
+  }
 
   profilePicUrls: { [key: string]: string | null } = {};
 

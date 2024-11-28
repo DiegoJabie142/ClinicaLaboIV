@@ -5,6 +5,7 @@ import { HeaderComponent } from '../../../shared/components/header/header.compon
 import { MatButtonModule } from '@angular/material/button';
 import { NgIf } from '@angular/common';
 import { DetallesComponent } from '../../../usuarios/detalles/detalles.component';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 
 
@@ -13,10 +14,30 @@ import { DetallesComponent } from '../../../usuarios/detalles/detalles.component
   standalone: true,
   imports: [HeaderComponent],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
+  animations: [
+    trigger('rotate', [
+      // Animación de entrada (rotación al aparecer)
+      transition(':enter', [
+        style({ transform: 'rotate(0deg)' }),  // Comienza sin rotación
+        animate('500ms ease-out', style({ transform: 'rotate(360deg)' }))  // Rota a 360 grados
+      ]),
+      // Animación de salida (rotación al desaparecer)
+      transition(':leave', [
+        animate('500ms ease-in', style({ transform: 'rotate(0deg)' }))  // Rota de vuelta a 0 grados
+      ])
+    ])
+  ]
 })
 
 export class HomeComponent {
+
+
+  isVisible = true;
+
+  toggleVisibility() {
+    this.isVisible = !this.isVisible;
+  }
 
   title = 'MyClinic';
   headerLinks: Array<{ label: string; route: string }> = [];

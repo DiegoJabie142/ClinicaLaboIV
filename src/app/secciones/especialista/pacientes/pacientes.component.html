@@ -1,0 +1,32 @@
+<app-header
+  [title]="'MyClinic'"
+></app-header>
+
+<h1 style="width: 100%; display: flex; justify-content: center; margin-top: 40px;">Tus Pacientes</h1>
+
+
+<div class="cards-container" *ngIf="pacientesDatos.length > 0">
+  <div *ngFor="let paciente of pacientesDatos" class="patient-card">
+    <div class="card-header">
+      <img [src]="paciente.profilePic" alt="Foto de perfil" class="profile-pic" />
+      <div class="patient-info">
+        <h3>{{ paciente.name }} {{ paciente.lastName }}</h3>
+        <p><strong>Edad:</strong> {{ paciente.age }}</p>
+        <p><strong>DNI:</strong> {{ paciente.dni }}</p>
+        <p><strong>Email:</strong> {{ paciente.email }}</p>
+        <p><strong>Obra Social:</strong> {{ paciente.socialWork }}</p>
+      </div>
+    </div>
+    <div class="card-actions">
+      <div *ngFor="let historia of historiaClinica[paciente.uid]">
+        <button class="action-button" style="margin-bottom: 15px;" (click)="verHistoriaClinica(historia)">
+          Historia clinica del: {{historia.fecha}} {{historia.horaInicio}}-{{historia.horaFin}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="pacientesDatos.length == 0" style="width: 100%; display: flex; justify-content: center; margin-top: 30px;">
+  <h1>No tienes pacientes todavía.</h1>
+</div>

@@ -9,7 +9,7 @@
   </h2>
   <div class="user-container" *ngIf="isTableSpecialistVisible">
     <div *ngFor="let specialist of specialistData" class="user-item">
-      <button class="fav-button" >
+      <button class="fav-button" (click)="mostrarDatosEspecialista(specialist)" appTooltip='{{ specialist.specialities.join(", ") }}'>
         <img [src]="specialist.profilePic" alt="Profile Picture" class="profile-pic" />
         <span>{{ specialist.name }} {{ specialist.lastName }} | @if(specialist.activated){Habilitado}@else{Deshabilitado}</span>
       </button>
@@ -38,9 +38,12 @@
   </h2>
   <div class="user-container" *ngIf="isTablePatientVisible">
     <div *ngFor="let patient of patientData" class="user-item">
-      <button class="fav-button" >
+      <button class="fav-button" (click)="mostrarDatosPaciente(patient)" appTooltip='DNI: {{patient.dni}}'>
         <img [src]="patient.profilePic" alt="Profile Picture 1" class="profile-pic" />
         <span>{{ patient.name }} {{ patient.lastName }}</span>
+      </button>
+      <button class="action-button" (click)="verHistoriaClinica(patient.uid)">
+        Ver Historia Clínica
       </button>
     </div>
   </div>
@@ -57,7 +60,7 @@
   </h2>
   <div class="user-container" *ngIf="isTableAdminVisible">
     <div *ngFor="let admin of adminData" class="user-item">
-      <button class="fav-button" >
+      <button class="fav-button" (click)="mostrarDatosAdmin(admin)">
         <img [src]="admin.profilePic" alt="Profile Picture" class="profile-pic" />
         <span>{{ admin.name }} {{ admin.lastName }}</span>
       </button>

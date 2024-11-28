@@ -64,16 +64,17 @@ export class HeaderComponent {
       this.links = [
         { label: 'Home', route: '/home' },
         { label: 'Mi Perfil', route: '/mi-perfil' },
-        { label: 'Sección Usuarios', route: '/users' },
-        { label: 'Turnos', route: '/mis-turnos' },
+        { label: 'Usuarios', route: '/usuarios' },
+        { label: 'Turnos', route: '/turnos' },
         { label: 'Solicitar Turno', route: '/solicitar-turno' },
+        { label: 'Informes', route: '/informes' },
       ];
     } else if (role === 'especialista') {
       this.links = [
         { label: 'Home', route: '/home' },
         { label: 'Mi Perfil', route: '/mi-perfil' },
-        { label: 'Mis Horarios', route: '/mis-horarios' },
         { label: 'Mis Turnos', route: '/mis-turnos' },
+        { label: 'Pacientes', route: '/pacientes' },
       ];
     } else if (role === 'paciente') {
       this.links = [

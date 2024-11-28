@@ -7,17 +7,37 @@ import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { FirebaseService } from '../../../services/firebase.service';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-select',
   standalone: true,
-  imports: [ HeaderComponent, LogoComponent, MatButton, FormsModule, ReactiveFormsModule],
+  imports: [ HeaderComponent, LogoComponent, MatButton, FormsModule, ReactiveFormsModule, NgIf],
   templateUrl: './select.component.html',
-  styleUrl: './select.component.scss'
+  styleUrl: './select.component.scss',
+  animations: [
+    trigger('slideInOut', [
+      // Deslizar desde abajo cuando el componente entra
+      transition(':enter', [
+        style({ transform: 'translateY(100%)' }),  // Comienza fuera de la pantalla
+        animate('600ms ease-out', style({ transform: 'translateY(0)' }))  // Se mueve hacia su posición original
+      ]),
+      // Deslizar hacia abajo cuando el componente sale
+      transition(':leave', [
+        animate('300ms ease-in', style({ transform: 'translateY(100%)' }))  // Se desliza hacia abajo
+      ])
+    ])
+  ]
 })
 
 
 export class SelectComponent {
+
+  isVisible = true;
+
+  toggleVisibility() {
+    this.isVisible = !this.isVisible;
+  }
 
   constructor(private router: Router){}
 

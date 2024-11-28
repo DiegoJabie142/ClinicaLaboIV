@@ -1,0 +1,30 @@
+<div id="contenidoHtml">
+  <div class="form-container">
+    <div class="form-group">
+      <label for="fechaInicio">Fecha de inicio:</label>
+      <input type="date" id="fechaInicio" [(ngModel)]="fechaInicio" class="input-field" />
+    </div>
+
+    <div class="form-group">
+      <label for="fechaFin">Fecha de fin:</label>
+      <input type="date" id="fechaFin" [(ngModel)]="fechaFin" class="input-field" />
+    </div>
+
+    <button (click)="obtenerInformeTurnos(fechaInicio, fechaFin)" class="submit-btn">Generar informe</button>
+
+    <div *ngIf="turnosPorEspecialista" class="turnos-informe">
+      <h3 class="informe-title">Informe de turnos por especialista</h3>
+      <ul class="turnos-list">
+        <li *ngFor="let especialista of turnosPorEspecialista | keyvalue" class="turno-item">
+          Especialista: {{especialista.key}} - Turnos: {{especialista.value}}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div style="width: 100%; display: flex; justify-content: center; margin-top: 50px; margin-bottom: 50px;">
+  <button (click)="descargarPdf()" class="btn-descargar">
+    Descargar como PDF
+  </button>   
+</div>

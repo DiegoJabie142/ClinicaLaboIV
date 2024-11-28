@@ -4,13 +4,13 @@
   [back]="true"
   [whereToBack]="'/sign-up/select'">
 </app-header>
-<div class="container" [class.body]="header">
+<div class="container" [class.body]="header" *ngIf="isVisible" [@slideInOut]>
     <div class="d-flex-center widht-100">
         <app-logo [titulo]="'Registro de Paciente'" [color]="color"></app-logo>
     </div>
     
     <div class="d-flex-center width-500">
-        <form  class="auth-form" (ngSubmit)="onSubmit()">
+        <form  class="auth-form">
 
             <!--NOMBRE-->
             <div class="margin-input">
@@ -125,7 +125,12 @@
             </div>
 
             <div class="d-flex-center widht-100">
-                <button mat-flat-button color="warn" class="button-login" [disabled]="form.invalid">REGISTRARSE</button>
+                <button mat-flat-button color="warn" class="button-login" [disabled]="form.invalid"
+                [appCaptcha]="onCaptchaOnSubmit()" 
+                [captchaTitle]="'Por favor, resuelve este captcha antes de continuar:'"
+                >
+                REGISTRARSE
+                </button>
             </div>
         </form>
         

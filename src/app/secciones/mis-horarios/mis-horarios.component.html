@@ -1,133 +1,88 @@
-<app-header
-  [title]="'MyClinic'"
-></app-header>
-
-<form #horariosForm="ngForm" (ngSubmit)="submitHorarios(horariosForm)" class="horarios-form">
-  <div class="month-columns">
-    <!-- Primera columna -->
-    <div class="month-column">
-      <div *ngFor="let month of getFirstHalfMonths()" class="month-container">
-        <h3>{{ month }}</h3>
-        <div class="days-container">
-          <div *ngFor="let day of availableDays[month]" class="day-container">
-            <label class="day-label">{{ day }} {{ month }}</label>
-            <div class="checkbox-container">
-              <input
-                type="checkbox"
-                [(ngModel)]="selectedDays[day]"
-                name="day-{{ day }}"
-                id="day-{{ day }}"
-                class="checkbox-input"
-              />
-              <label for="day-{{ day }}" class="checkbox-label">Horarios:</label>
-            </div>
-            <div *ngIf="selectedDays[day]" class="time-selector">
-                <label for="start-time-{{ day }}" class="time-label">Hora de inicio:</label>
-                <select
-                  [(ngModel)]="availableTimes[day].start"
-                  name="start-time-{{ day }}"
-                  class="time-select"
-                >
-                  <option *ngFor="let time of availableTimeSlots" [value]="time">{{ time }}</option>
-                </select>
-              
-                <label for="end-time-{{ day }}" class="time-label">Hora de fin:</label>
-                <select
-                  [(ngModel)]="availableTimes[day].end"
-                  name="end-time-{{ day }}"
-                  class="time-select"
-                  [ngClass]="{'invalid': isEndTimeInvalid(day)}"
-                >
-                  <option *ngFor="let time of getFilteredEndTimes(day)" [value]="time">{{ time }}</option>
-                </select>
-              </div>
-              
-          </div>
-        </div>
+<div class="horarios-container">
+  <div style="width: 100%; display: flex; justify-content: center;">
+    <h1 style="font-size: 30px; padding-top: 20px;">Mis Horarios</h1>
+  </div>
+  <div style="width: 100%; display: flex; justify-content: center; margin-bottom: 30px;">
+    <table [ngClass]="{'empty': especialidadesConDuracion.length === 0}">
+      <thead>
+        <tr>
+          <th>Especialidad</th>
+          <th>Duración (minutos)</th>
+          <th>Seleccionar Duración</th>
+          <th>Acción</th> <!-- Nueva columna -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let especialidad of especialidadesConDuracion">
+          <td>{{ especialidad.especialidad }}</td>
+          <td>{{ especialidad.duracion }}</td>
+          <td>
+            <select [(ngModel)]="especialidad.duracion">
+              <option value="15">15 minutos</option>
+              <option value="30">30 minutos</option>
+              <option value="45">45 minutos</option>
+              <option value="60">60 minutos</option>
+            </select>
+          </td>
+          <td>
+            <button 
+            [appCaptcha]="onCaptchaonDuracionChange(especialidad)" 
+            [captchaTitle]="'Por favor, resuelve este captcha antes de continuar:'"
+            >Guardar
+          </button> <!-- Botón Guardar -->
+          </td>
+        </tr>
+        <tr *ngIf="especialidadesConDuracion.length === 0">
+          <td colspan="4" class="empty">No hay especialidades disponibles</td>
+        </tr>
+      </tbody>
+    </table>
+    
+  </div>
+  <div class="days-grid">
+    <div *ngFor="let day of availableDays" class="day-card">
+      <div class="day-header">
+        <span>{{ day | titlecase }}</span>
       </div>
-    </div>
+      <div class="day-body">
+        <!-- Campos de hora de inicio y fin -->
+        <label for="startTime">Inicio:</label>
+        <select [(ngModel)]="newHorario[day].startTime" [ngModelOptions]="{ standalone: true }">
+          <option *ngFor="let time of getAvailableTimeSlots(day)" [value]="time">{{ time }}</option>
+        </select>
 
-    <!-- Segunda columna -->
-    <div class="month-column">
-      <div *ngFor="let month of getSecondHalfMonths()" class="month-container">
-        <h3>{{ month }}</h3>
-        <div class="days-container">
-          <div *ngFor="let day of availableDays[month]" class="day-container">
-            <label class="day-label">{{ day }} {{ month }}</label>
-            <div class="checkbox-container">
-              <input
-                type="checkbox"
-                [(ngModel)]="selectedDays[day]"
-                name="day-{{ day }}"
-                id="day-{{ day }}"
-                class="checkbox-input"
-              />
-              <label for="day-{{ day }}" class="checkbox-label">Disponible</label>
-            </div>
-            <div *ngIf="selectedDays[day]" class="time-selector">
-                <label for="start-time-{{ day }}" class="time-label">Hora de inicio:</label>
-                <select
-                  [(ngModel)]="availableTimes[day].start"
-                  name="start-time-{{ day }}"
-                  class="time-select"
-                >
-                  <option *ngFor="let time of availableTimeSlots" [value]="time">{{ time }}</option>
-                </select>
-              
-                <label for="end-time-{{ day }}" class="time-label">Hora de fin:</label>
-                <select
-                  [(ngModel)]="availableTimes[day].end"
-                  name="end-time-{{ day }}"
-                  class="time-select"
-                  [ngClass]="{'invalid': isEndTimeInvalid(day)}"
-                >
-                  <option *ngFor="let time of getFilteredEndTimes(day)" [value]="time">{{ time }}</option>
-                </select>
+        <label for="endTime">Fin:</label>
+        <select [(ngModel)]="newHorario[day].endTime" [ngModelOptions]="{ standalone: true }">
+          <option *ngFor="let time of getAvailableTimeSlots(day)" [value]="time">{{ time }}</option>
+        </select>
+
+        <button (click)="addHorarioForDay2(day)" class="add-btn">Añadir Horario</button>
+
+        <!-- Mostrar los horarios añadidos -->
+        <div *ngIf="addedHorarios[day] && addedHorarios[day].length > 0">
+          <p style="padding-top: 20px; font-size: 20px;">Horarios:</p>
+          <ul>
+            <li *ngFor="let horario of addedHorarios[day]; let i = index">
+              <div style="width: 100%; display: flex; justify-content: space-between; padding-top: 15px;" >
+                <p style="font-size: 15px;">{{ horario.startTime }} - {{ horario.endTime }}</p>
+                <button (click)="removeHorario(day, i)" class="remove-btn" style="position: relative; top: -5px;">Eliminar</button>
               </div>
-          </div>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
   </div>
 
-  <button type="submit" class="submit-btn">Guardar Horarios</button>
-</form>
+  <!-- Botón para guardar todos los horarios -->
+  <div class="save-container">
+    <button 
+    [appCaptcha]="onCaptchaSubmitHorario()" 
+    [captchaTitle]="'Por favor, resuelve este captcha antes de continuar:'"
+     class="save-btn" style="font-size: 16px;">
+     Guardar Todos
+    </button>
+  </div>
 
-
-<div class="d-flex w-100" style="justify-content: center;"><h1>TUS HORARIOS</h1></div>
-
-<div class="w-80 mb-50">
-    <table *ngIf="horarios.length > 0" class="horarios-table">
-        <thead>
-          <tr>
-            <th>Día</th>
-            <th>Hora de Inicio</th>
-            <th>Hora de Fin</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let horario of horarios">
-            <!-- Accede a las propiedades directamente -->
-            <td>{{ horario.date }}</td>
-            <td>{{ horario.start }}</td>
-            <td>{{ horario.end }}</td>
-            <td>
-              <span style="font-weight: 600;" [ngClass]="{
-                'disponible': horario.status === 'disponible',
-                'pendiente': horario.status === 'pendiente',
-                'aceptado': horario.status === 'aceptado',
-                'rechazado': horario.status === 'rechazado',
-                'cancelado': horario.status === 'cancelado',
-                'finalizado': horario.status === 'finalizado'
-              }">
-                {{ horario.status | titlecase }}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <p *ngIf="horarios.length === 0">No se han guardado horarios para este especialista.</p>
 </div>
 
-  
